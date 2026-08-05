@@ -83,4 +83,45 @@ describe("useAssetTable", () => {
 
     global.fetch = originalFetch
   })
+
+  it("starts on page 1 and slices visibleAssets by pageSize", () => {
+    const { result } = renderHook(() => useAssetTable(ASSETS, { pageSize: 1 }))
+
+    expect(result.current.page).toBe(1)
+    expect(result.current.totalPages).toBe(2)
+    expect(result.current.visibleAssets.map((a) => a.id)).toEqual(["asset-1"])
+  })
+
+  it("goToPage moves to the requested page", () => {
+    const { result } = renderHook(() => useAssetTable(ASSETS, { pageSize: 1 }))
+
+    act(() => result.current.goToPage(2))
+
+    expect(result.current.page).toBe(2)
+    expect(result.current.visibleAssets.map((a) => a.id)).toEqual(["asset-2"])
+  })
+
+  it("nextPage and prevPage clamp to [1, totalPages]", () => {
+    const { result } = renderHook(() => useAssetTable(ASSETS, { pageSize: 1 }))
+
+    act(() => result.current.prevPage())
+    expect(result.current.page).toBe(1)
+
+    act(() => result.current.nextPage())
+    expect(result.current.page).toBe(2)
+
+    act(() => result.current.nextPage())
+    expect(result.current.page).toBe(2)
+  })
+
+  it("resets to page 1 whenever a filter setter is called", () => {
+    const { result } = renderHook(() => useAssetTable(ASSETS, { pageSize: 1 }))
+
+    act(() => result.current.goToPage(2))
+    expect(result.current.page).toBe(2)
+
+    act(() => result.current.setQuery("frontend"))
+
+    expect(result.current.page).toBe(1)
+  })
 })
