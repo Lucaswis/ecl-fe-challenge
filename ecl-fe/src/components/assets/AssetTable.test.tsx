@@ -21,12 +21,21 @@ const ASSETS: Asset[] = [
 ]
 
 describe("AssetTable", () => {
-  it("renders a row for each asset from props", () => {
+  it("renders a row for each asset from props with name/description/createdAt/lastScan and no severity column", () => {
     render(<AssetTable assets={ASSETS} />)
 
     expect(screen.getByText("Production Server")).toBeInTheDocument()
+    expect(screen.getByText("Main backend server")).toBeInTheDocument()
+    expect(screen.getByText("2025-01-10")).toBeInTheDocument()
+    expect(screen.getByText("2025-02-01")).toBeInTheDocument()
     expect(screen.getByText("Frontend Cluster")).toBeInTheDocument()
     expect(screen.getAllByTestId("asset-table-row")).toHaveLength(2)
+
+    expect(screen.getByRole("columnheader", { name: "Nombre" })).toBeInTheDocument()
+    expect(screen.getByRole("columnheader", { name: "Descripción" })).toBeInTheDocument()
+    expect(screen.getByRole("columnheader", { name: "Creado" })).toBeInTheDocument()
+    expect(screen.getByRole("columnheader", { name: "Último escaneo" })).toBeInTheDocument()
+    expect(screen.queryByRole("columnheader", { name: /severidad/i })).not.toBeInTheDocument()
   })
 
   it("narrows the rendered rows when the user types in the filter", async () => {
