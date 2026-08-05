@@ -20,6 +20,83 @@
           "description": "Cluster for web apps",
           "createdAt": "2025-01-20T08:30:00Z",
           "lastScan": "2025-02-02T09:30:00Z"
+        },
+        {
+          "id": "asset-3",
+          "name": "Staging Database",
+          "description": "PostgreSQL staging instance",
+          "createdAt": "2024-11-05T09:00:00Z",
+          "lastScan": "2024-11-20T09:00:00Z"
+        },
+        {
+          "id": "asset-4",
+          "name": "Internal API Gateway",
+          "description": "Routes internal microservice traffic",
+          "createdAt": "2024-11-18T10:00:00Z",
+          "lastScan": "2024-12-02T10:00:00Z"
+        },
+        {
+          "id": "asset-5",
+          "name": "Staging Server",
+          "description": "Pre-production smoke-test environment",
+          "createdAt": "2024-12-01T08:00:00Z",
+          "lastScan": "2024-12-15T08:00:00Z"
+        },
+        {
+          "id": "asset-6",
+          "name": "Payment Processing Service",
+          "description": "Handles card transactions",
+          "createdAt": "2024-12-10T11:00:00Z",
+          "lastScan": "2025-01-03T11:00:00Z"
+        },
+        {
+          "id": "asset-7",
+          "name": "Log Aggregation Cluster",
+          "description": "Centralized logging for all services",
+          "createdAt": "2024-12-22T07:00:00Z",
+          "lastScan": "2025-01-10T07:00:00Z"
+        },
+        {
+          "id": "asset-8",
+          "name": "CI/CD Runner",
+          "description": "Executes build and deploy pipelines",
+          "createdAt": "2025-01-02T06:00:00Z",
+          "lastScan": "2025-01-18T06:00:00Z"
+        },
+        {
+          "id": "asset-9",
+          "name": "Analytics Pipeline",
+          "description": "Batch server jobs for usage metrics",
+          "createdAt": "2025-01-12T05:00:00Z",
+          "lastScan": "2025-01-28T05:00:00Z"
+        },
+        {
+          "id": "asset-10",
+          "name": "Documentation Portal",
+          "description": "Public-facing developer docs site",
+          "createdAt": "2025-01-25T04:00:00Z",
+          "lastScan": "2025-02-08T04:00:00Z"
+        },
+        {
+          "id": "asset-11",
+          "name": "Legacy Billing System",
+          "description": "Monolith handling invoicing",
+          "createdAt": "2025-02-03T03:00:00Z",
+          "lastScan": "2025-02-19T03:00:00Z"
+        },
+        {
+          "id": "asset-12",
+          "name": "Customer Support Bot",
+          "description": "Chat automation for support tickets",
+          "createdAt": "2025-02-14T02:00:00Z",
+          "lastScan": "2025-03-01T02:00:00Z"
+        },
+        {
+          "id": "asset-13",
+          "name": "Vulnerability Scanner Node",
+          "description": "Runs scheduled network scans",
+          "createdAt": "2025-03-02T01:00:00Z",
+          "lastScan": "2025-03-10T01:00:00Z"
         }
       ]
     }
@@ -157,6 +234,381 @@
           "severity": "CRITICAL"
         }
       ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-3"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-3",
+        "name": "Staging Database",
+        "description": "PostgreSQL staging instance",
+        "createdAt": "2024-11-05T09:00:00Z",
+        "lastScan": "2024-11-20T09:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-3/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-5",
+          "description": "Outdated TLS cipher suite",
+          "severity": "LOW"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-4"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-4",
+        "name": "Internal API Gateway",
+        "description": "Routes internal microservice traffic",
+        "createdAt": "2024-11-18T10:00:00Z",
+        "lastScan": "2024-12-02T10:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-4/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-6",
+          "description": "Verbose error messages exposed to clients",
+          "severity": "LOW"
+        },
+        {
+          "id": "vuln-7",
+          "description": "Missing rate limiting on public routes",
+          "severity": "MEDIUM"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-5"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-5",
+        "name": "Staging Server",
+        "description": "Pre-production smoke-test environment",
+        "createdAt": "2024-12-01T08:00:00Z",
+        "lastScan": "2024-12-15T08:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-5/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": []
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-6"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-6",
+        "name": "Payment Processing Service",
+        "description": "Handles card transactions",
+        "createdAt": "2024-12-10T11:00:00Z",
+        "lastScan": "2025-01-03T11:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-6/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-8",
+          "description": "Insecure session token storage",
+          "severity": "MEDIUM"
+        },
+        {
+          "id": "vuln-9",
+          "description": "Remote code execution in payment SDK",
+          "severity": "CRITICAL"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-7"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-7",
+        "name": "Log Aggregation Cluster",
+        "description": "Centralized logging for all services",
+        "createdAt": "2024-12-22T07:00:00Z",
+        "lastScan": "2025-01-10T07:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-7/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-10",
+          "description": "Unauthenticated Elasticsearch endpoint",
+          "severity": "HIGH"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-8"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-8",
+        "name": "CI/CD Runner",
+        "description": "Executes build and deploy pipelines",
+        "createdAt": "2025-01-02T06:00:00Z",
+        "lastScan": "2025-01-18T06:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-8/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-11",
+          "description": "Outdated Docker base image",
+          "severity": "MEDIUM"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-9"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-9",
+        "name": "Analytics Pipeline",
+        "description": "Batch server jobs for usage metrics",
+        "createdAt": "2025-01-12T05:00:00Z",
+        "lastScan": "2025-01-28T05:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-9/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-12",
+          "description": "Deprecated crypto library",
+          "severity": "LOW"
+        },
+        {
+          "id": "vuln-13",
+          "description": "Unpatched minor dependency",
+          "severity": "LOW"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-10"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-10",
+        "name": "Documentation Portal",
+        "description": "Public-facing developer docs site",
+        "createdAt": "2025-01-25T04:00:00Z",
+        "lastScan": "2025-02-08T04:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-10/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": []
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-11"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-11",
+        "name": "Legacy Billing System",
+        "description": "Monolith handling invoicing",
+        "createdAt": "2025-02-03T03:00:00Z",
+        "lastScan": "2025-02-19T03:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-11/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-14",
+          "description": "Hardcoded database credentials",
+          "severity": "CRITICAL"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-12"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-12",
+        "name": "Customer Support Bot",
+        "description": "Chat automation for support tickets",
+        "createdAt": "2025-02-14T02:00:00Z",
+        "lastScan": "2025-03-01T02:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-12/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "vuln-15",
+          "description": "Excessive third-party permissions",
+          "severity": "LOW"
+        },
+        {
+          "id": "vuln-16",
+          "description": "Prompt injection vulnerability",
+          "severity": "HIGH"
+        }
+      ]
+    }
+  },
+
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-13"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "asset-13",
+        "name": "Vulnerability Scanner Node",
+        "description": "Runs scheduled network scans",
+        "createdAt": "2025-03-02T01:00:00Z",
+        "lastScan": "2025-03-10T01:00:00Z",
+        "components": []
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/assets/asset-13/vulnerabilities"
+    },
+    "httpResponse": {
+      "statusCode": 500
     }
   }
 ]
