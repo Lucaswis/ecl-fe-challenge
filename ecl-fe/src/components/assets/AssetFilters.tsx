@@ -1,5 +1,7 @@
 "use client"
 
+import { Field } from "@base-ui/react/field"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -32,7 +34,7 @@ export function AssetFilters({
       className="flex flex-wrap items-end gap-3 rounded-lg border border-border/50 bg-card/50 p-3"
       data-testid="asset-filters"
     >
-      <div className="flex flex-col gap-1">
+      <Field.Root className="flex flex-col gap-1">
         <label htmlFor="asset-query" className="text-xs font-medium text-muted-foreground">
           Buscar
         </label>
@@ -43,7 +45,7 @@ export function AssetFilters({
           onChange={(event) => onQueryChange(event.target.value)}
           className="w-48"
         />
-      </div>
+      </Field.Root>
 
       <div className="flex flex-col gap-1">
         <label htmlFor="asset-date-field" className="text-xs font-medium text-muted-foreground">
@@ -60,7 +62,7 @@ export function AssetFilters({
         </select>
       </div>
 
-      <div className="flex flex-col gap-1">
+      <Field.Root className="flex flex-col gap-1">
         <label htmlFor="asset-date-from" className="text-xs font-medium text-muted-foreground">
           Desde
         </label>
@@ -70,9 +72,9 @@ export function AssetFilters({
           value={criteria.dateFrom ?? ""}
           onChange={(event) => onDateFromChange(event.target.value || null)}
         />
-      </div>
+      </Field.Root>
 
-      <div className="flex flex-col gap-1">
+      <Field.Root className="flex flex-col gap-1">
         <label htmlFor="asset-date-to" className="text-xs font-medium text-muted-foreground">
           Hasta
         </label>
@@ -82,7 +84,7 @@ export function AssetFilters({
           value={criteria.dateTo ?? ""}
           onChange={(event) => onDateToChange(event.target.value || null)}
         />
-      </div>
+      </Field.Root>
 
       <Button variant="outline" size="sm" onClick={onReset} disabled={!isFiltered}>
         Limpiar filtros

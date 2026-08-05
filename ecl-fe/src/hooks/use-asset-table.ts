@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 
 import { filterAssets } from "@/lib/assets/filter-assets"
+import { paginate, totalPagesOf } from "@/lib/assets/paginate"
 import type { Asset, AssetFilterCriteria, DateField } from "@/lib/assets/types"
 
 const DEFAULT_CRITERIA: AssetFilterCriteria = {
@@ -10,16 +11,34 @@ const DEFAULT_CRITERIA: AssetFilterCriteria = {
   dateTo: null,
 }
 
-export function useAssetTable(assets: Asset[]) {
-  const [criteria, setCriteria] = useState<AssetFilterCriteria>(DEFAULT_CRITERIA)
+interface UseAssetTableOptions {
+  pageSize?: number
+}
 
-  const setQuery = (query: string) => setCriteria((prev) => ({ ...prev, query }))
-  const setDateField = (dateField: DateField) =>
+export function useAssetTable(assets: Asset[], { pageSize = 10 }: UseAssetTableOptions = {}) {
+  const [criteria, setCriteria] = useState<AssetFilterCriteria>(DEFAULT_CRITERIA)
+  const [page, setPage] = useState(1)
+
+  const setQuery = (query: string) => {
+    setCriteria((prev) => ({ ...prev, query }))
+    setPage(1)
+  }
+  const setDateField = (dateField: DateField) => {
     setCriteria((prev) => ({ ...prev, dateField }))
-  const setDateFrom = (dateFrom: string | null) =>
+    setPage(1)
+  }
+  const setDateFrom = (dateFrom: string | null) => {
     setCriteria((prev) => ({ ...prev, dateFrom }))
-  const setDateTo = (dateTo: string | null) => setCriteria((prev) => ({ ...prev, dateTo }))
-  const resetFilters = () => setCriteria(DEFAULT_CRITERIA)
+    setPage(1)
+  }
+  const setDateTo = (dateTo: string | null) => {
+    setCriteria((prev) => ({ ...prev, dateTo }))
+    setPage(1)
+  }
+  const resetFilters = () => {
+    setCriteria(DEFAULT_CRITERIA)
+    setPage(1)
+  }
 
   const isFiltered =
     criteria.query !== DEFAULT_CRITERIA.query ||
@@ -28,6 +47,16 @@ export function useAssetTable(assets: Asset[]) {
     criteria.dateTo !== DEFAULT_CRITERIA.dateTo
 
   const filteredAssets = useMemo(() => filterAssets(assets, criteria), [assets, criteria])
+  const totalPages = totalPagesOf(filteredAssets.length, pageSize)
+  const safePage = Math.min(page, totalPages)
+  const visibleAssets = useMemo(
+    () => paginate(filteredAssets, safePage, pageSize),
+    [filteredAssets, safePage, pageSize]
+  )
+
+  const goToPage = (target: number) => setPage(Math.min(Math.max(target, 1), totalPages))
+  const nextPage = () => goToPage(safePage + 1)
+  const prevPage = () => goToPage(safePage - 1)
 
   return {
     criteria,
@@ -39,6 +68,12 @@ export function useAssetTable(assets: Asset[]) {
     isFiltered,
     totalCount: assets.length,
     filteredCount: filteredAssets.length,
-    visibleAssets: filteredAssets,
+    visibleAssets,
+    page: safePage,
+    pageSize,
+    totalPages,
+    goToPage,
+    nextPage,
+    prevPage,
   }
 }

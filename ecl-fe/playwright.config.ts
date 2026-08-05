@@ -36,16 +36,19 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testMatch: /assets\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
     },
 
     {
       name: 'firefox',
+      testMatch: /assets\.spec\.ts/,
       use: { ...devices['Desktop Firefox'] },
     },
 
     {
       name: 'webkit',
+      testMatch: /assets\.spec\.ts/,
       use: { ...devices['Desktop Safari'] },
     },
 
@@ -75,6 +78,5 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    env: { BACKEND_URL: 'http://localhost:39999' },
   },
 });

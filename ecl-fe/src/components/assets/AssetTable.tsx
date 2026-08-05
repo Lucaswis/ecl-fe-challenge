@@ -2,6 +2,7 @@
 
 import { AssetEmptyState } from "@/components/assets/AssetEmptyState"
 import { AssetFilters } from "@/components/assets/AssetFilters"
+import { AssetPagination } from "@/components/assets/AssetPagination"
 import { AssetTableRow } from "@/components/assets/AssetTableRow"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useAssetTable } from "@/hooks/use-asset-table"
@@ -23,6 +24,10 @@ export function AssetTable({ assets }: AssetTableProps) {
     totalCount,
     filteredCount,
     visibleAssets,
+    page,
+    totalPages,
+    nextPage,
+    prevPage,
   } = useAssetTable(assets)
 
   return (
@@ -58,6 +63,10 @@ export function AssetTable({ assets }: AssetTableProps) {
           </TableBody>
         </Table>
       )}
+
+      {totalPages > 1 ? (
+        <AssetPagination page={page} totalPages={totalPages} onPrev={prevPage} onNext={nextPage} />
+      ) : null}
     </div>
   )
 }
