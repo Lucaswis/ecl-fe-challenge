@@ -1,9 +1,6 @@
-import { AssetTable } from "@/components/assets/AssetTable"
-import { getAssets } from "@/lib/assets/get-assets"
+import { AssetTableSkeleton } from "@/components/assets/AssetTableSkeleton"
 
-export default async function Home() {
-  const assets = await getAssets()
-
+export default function Loading() {
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-10 sm:px-10">
       <header className="flex flex-col gap-1">
@@ -12,7 +9,7 @@ export default async function Home() {
           Listado de assets registrados, con filtros por nombre, descripción y fecha.
         </p>
       </header>
-      <AssetTable assets={assets} />
+      <AssetTableSkeleton rows={10} />
     </div>
   )
 }
