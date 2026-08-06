@@ -81,4 +81,15 @@ describe("AssetTable", () => {
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument()
     expect(screen.queryByText(/página/i)).not.toBeInTheDocument()
   })
+
+  it("keeps the surviving row's DOM node stable when an earlier row gets filtered out", async () => {
+    const user = userEvent.setup()
+    render(<AssetTable assets={ASSETS} />)
+
+    const rowBefore = screen.getByText("Frontend Cluster").closest("tr")
+    await user.type(screen.getByLabelText("Buscar"), "frontend")
+    const rowAfter = screen.getByText("Frontend Cluster").closest("tr")
+
+    expect(rowAfter).toBe(rowBefore)
+  })
 })
