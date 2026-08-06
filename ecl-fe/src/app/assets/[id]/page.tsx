@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 
 import { AssetDetailHeader } from "@/components/assets/AssetDetailHeader"
+import { BackToListingLink } from "@/components/assets/BackToListingLink"
 import { ComponentAccordion } from "@/components/assets/ComponentAccordion"
 import { VulnerabilityList } from "@/components/assets/VulnerabilityList"
 import { getAssetDetail } from "@/lib/assets/get-asset-detail"
@@ -19,6 +20,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-10 sm:px-10">
+      <BackToListingLink />
       <AssetDetailHeader asset={detail.asset} />
 
       <section className="flex flex-col gap-3">
