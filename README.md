@@ -1,66 +1,83 @@
-# Eclypsium Frontend Challenge — Asset Dashboard
+# Eclypsium Frontend Challenge
 
-Frontend solution for the Eclypsium Sr. Frontend Engineer challenge: a dashboard to list, filter, and inspect assets and the vulnerabilities found on them.
+Technical challenge for Senior Software Engineer - Frontend position
 
-## What's here
+## Overview
 
-- **Asset listing** with filters by name/description, date range, and severity, plus pagination. This is the one hard requirement from the brief.
-- **Asset detail view**: click an asset to see its components (in an accordion) and its full vulnerability list.
-- **Severity aggregation**: the listing shows each asset's highest severity and vulnerability count, computed server-side from the raw per-asset vulnerability data the mock backend exposes.
-- **Theme toggle** (light/dark) and a **language toggle** (ES/EN) for the app's own UI text.
+This project includes a mock backend that simulates an asset and security vulnerability management system. Your task is to create a frontend application that consumes these endpoints and presents the information in an efficient and attractive manner.
 
-None of the last three were required by the brief — they're there because they made for a more complete submission.
+## Expected Features
 
-## Stack
+Your frontend application should include:
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind v4, shadcn/ui + Base UI for components. Jest + Testing Library for unit/integration tests, Playwright for e2e.
+- **Asset Dashboard**: List all available assets
 
-## Running it
+Additionally you can include as optional views:
+  - **Detail View**: Show detailed information for each asset
+  - **Component Management**: Display components for each asset
+  - **Vulnerability Analysis**: Present vulnerabilities found with different severity levels
 
-You need Docker running for the mock backend — most of the app has nothing to show without it.
+## Available API Endpoints
 
+The mock backend provides the following endpoints:
+
+### Assets
+- `GET /assets` - List all assets
+- `GET /assets/{id}` - Get details of a specific asset
+- `GET /assets/{id}/vulnerabilities` - List vulnerabilities for an asset
+
+### Components
+- `GET /assets/{assetId}/components/{componentId}` - Details of a specific component
+
+### Response Examples
+
+**GET /assets**
+```json
+[
+  {
+    "id": "asset-1",
+    "name": "Production Server",
+    "description": "Main backend server",
+    "createdAt": "2025-01-10T12:00:00Z",
+    "lastScan": "2025-02-01T10:00:00Z"
+  }
+]
+```
+
+**GET /assets/{id}/vulnerabilities**
+```json
+[
+  {
+    "id": "vuln-1",
+    "description": "OpenSSL out-of-bounds read",
+    "severity": "HIGH"
+  }
+]
+```
+
+
+> If you want to modify the API samples feel free to edit `backend-mock/expectations.json`
+
+## Setup Instructions
+
+### Prerequisites
+- Docker and Docker Compose
+
+### Starting the Mock Backend
+
+1. Start the mock backend:
 ```bash
-# from the repo root
 docker compose up -d
-
-# in another terminal, from ecl-fe/
-npm install
-npm run dev
 ```
 
-Open `http://localhost:3000`. The app expects the mock backend at `http://localhost:8080` by default (see `ecl-fe/.env.example` — `BACKEND_URL`, server-side only, never exposed to the browser).
+The backend will be available at `http://localhost:8080`
 
-If Docker isn't running, the app doesn't crash — you'll see an error screen with a retry button, which is intentional (it's one of the things the app is built to handle gracefully, not a bug).
-
-## Testing
-
-All from `ecl-fe/`:
-
-```bash
-npm test                  # unit + integration (Jest), no Docker needed
-npm run test:e2e          # e2e against the real mock backend — needs Docker up
-npm run test:e2e:error    # e2e against a deliberately unreachable backend, covers the error/retry flow
-```
-
-## A few things worth knowing
-
-- The mock backend (`backend-mock/expectations.json`) only implements a simplified version of the model described in the challenge PDF — there's no `Scan` or `Threat` entity, vulnerabilities come back as a flat list per asset. The app is built against what the mock actually returns, not the full PDF model.
-- One asset in the mock (`asset-13`) has its vulnerabilities endpoint deliberately return a 500. That's on purpose — it's there so the "one asset's data failed to load, the rest of the table still works" behavior is actually exercised, not just claimed.
-- Severity aggregation happens through a small internal API route (`/api/assets`) that isn't called by the app itself — `page.tsx` calls the same aggregation function directly, since routing a server component through its own API would just add a pointless network hop. The route exists as a standalone, independently testable piece showing how the N+1 problem (one vulnerability fetch per asset) gets solved, in case that's useful to look at on its own.
-
-## Mock backend reference
-
-The mock is a [MockServer](https://www.mock-server.com/) instance seeded from `backend-mock/expectations.json`.
-
-**Endpoints**
-
-- `GET /assets` — list all assets
-- `GET /assets/{id}` — asset detail, including its component IDs
-- `GET /assets/{id}/vulnerabilities` — vulnerabilities for an asset
-- `GET /assets/{assetId}/components/{componentId}` — component detail
-
-Edit `backend-mock/expectations.json` directly if you want to change the sample data.
-
+2. Verify it's working:
 ```bash
 curl http://localhost:8080/assets
 ```
+
+
+## Support
+
+If you have any questions about the challenge or encounter issues with the mock backend, please don't hesitate to contact us.
