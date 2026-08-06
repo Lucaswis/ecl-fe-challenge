@@ -3,7 +3,7 @@ import type { HighestSeverity, Severity } from "@/lib/assets/types"
 
 interface SeverityBadgeProps {
   severity: HighestSeverity
-  vulnerabilityCount: number
+  vulnerabilityCount?: number
 }
 
 const SEVERITY_CLASSNAME: Record<Severity, string> = {
@@ -36,7 +36,9 @@ export function SeverityBadge({ severity, vulnerabilityCount }: SeverityBadgePro
 
   return (
     <Badge className={SEVERITY_CLASSNAME[severity]}>
-      {severity} · {vulnerabilityLabel(vulnerabilityCount)}
+      {vulnerabilityCount === undefined
+        ? severity
+        : `${severity} · ${vulnerabilityLabel(vulnerabilityCount)}`}
     </Badge>
   )
 }
