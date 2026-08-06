@@ -69,6 +69,7 @@ function DateFilterField({ id, label, value, onChange }: DateFilterFieldProps) {
         <PopoverContent className="w-auto p-0">
           <Calendar
             mode="single"
+            captionLayout="dropdown"
             selected={selected}
             defaultMonth={selected ?? new Date()}
             onSelect={(date) => {
