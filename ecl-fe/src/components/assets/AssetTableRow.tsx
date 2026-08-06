@@ -1,8 +1,9 @@
+import { SeverityBadge } from "@/components/assets/SeverityBadge"
 import { TableCell, TableRow } from "@/components/ui/table"
-import type { Asset } from "@/lib/assets/types"
+import type { AssetWithSeverity } from "@/lib/assets/types"
 
 interface AssetTableRowProps {
-  asset: Asset
+  asset: AssetWithSeverity
   index: number
 }
 
@@ -23,6 +24,9 @@ export function AssetTableRow({ asset, index }: AssetTableRowProps) {
       </TableCell>
       <TableCell>{formatDay(asset.createdAt)}</TableCell>
       <TableCell>{formatDay(asset.lastScan)}</TableCell>
+      <TableCell>
+        <SeverityBadge severity={asset.highestSeverity} vulnerabilityCount={asset.vulnerabilityCount} />
+      </TableCell>
     </TableRow>
   )
 }

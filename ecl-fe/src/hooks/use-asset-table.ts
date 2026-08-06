@@ -2,20 +2,29 @@ import { useMemo, useState } from "react"
 
 import { filterAssets } from "@/lib/assets/filter-assets"
 import { paginate, totalPagesOf } from "@/lib/assets/paginate"
-import type { Asset, AssetFilterCriteria, DateField } from "@/lib/assets/types"
+import type {
+  AssetFilterCriteria,
+  AssetWithSeverity,
+  DateField,
+  SeverityFilterValue,
+} from "@/lib/assets/types"
 
 const DEFAULT_CRITERIA: AssetFilterCriteria = {
   query: "",
   dateField: "createdAt",
   dateFrom: null,
   dateTo: null,
+  severity: "ALL",
 }
 
 interface UseAssetTableOptions {
   pageSize?: number
 }
 
-export function useAssetTable(assets: Asset[], { pageSize = 10 }: UseAssetTableOptions = {}) {
+export function useAssetTable(
+  assets: AssetWithSeverity[],
+  { pageSize = 10 }: UseAssetTableOptions = {}
+) {
   const [criteria, setCriteria] = useState<AssetFilterCriteria>(DEFAULT_CRITERIA)
   const [page, setPage] = useState(1)
 
@@ -35,6 +44,10 @@ export function useAssetTable(assets: Asset[], { pageSize = 10 }: UseAssetTableO
     setCriteria((prev) => ({ ...prev, dateTo }))
     setPage(1)
   }
+  const setSeverity = (severity: SeverityFilterValue) => {
+    setCriteria((prev) => ({ ...prev, severity }))
+    setPage(1)
+  }
   const resetFilters = () => {
     setCriteria(DEFAULT_CRITERIA)
     setPage(1)
@@ -44,7 +57,8 @@ export function useAssetTable(assets: Asset[], { pageSize = 10 }: UseAssetTableO
     criteria.query !== DEFAULT_CRITERIA.query ||
     criteria.dateField !== DEFAULT_CRITERIA.dateField ||
     criteria.dateFrom !== DEFAULT_CRITERIA.dateFrom ||
-    criteria.dateTo !== DEFAULT_CRITERIA.dateTo
+    criteria.dateTo !== DEFAULT_CRITERIA.dateTo ||
+    criteria.severity !== DEFAULT_CRITERIA.severity
 
   const filteredAssets = useMemo(() => filterAssets(assets, criteria), [assets, criteria])
   const totalPages = totalPagesOf(filteredAssets.length, pageSize)
@@ -64,6 +78,7 @@ export function useAssetTable(assets: Asset[], { pageSize = 10 }: UseAssetTableO
     setDateField,
     setDateFrom,
     setDateTo,
+    setSeverity,
     resetFilters,
     isFiltered,
     totalCount: assets.length,

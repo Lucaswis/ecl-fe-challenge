@@ -1,14 +1,16 @@
 import { act, renderHook } from "@testing-library/react"
 import { useAssetTable } from "./use-asset-table"
-import type { Asset } from "@/lib/assets/types"
+import type { AssetWithSeverity } from "@/lib/assets/types"
 
-const ASSETS: Asset[] = [
+const ASSETS: AssetWithSeverity[] = [
   {
     id: "asset-1",
     name: "Production Server",
     description: "Main backend server",
     createdAt: "2025-01-10T12:00:00Z",
     lastScan: "2025-02-01T10:00:00Z",
+    highestSeverity: "HIGH",
+    vulnerabilityCount: 2,
   },
   {
     id: "asset-2",
@@ -16,6 +18,8 @@ const ASSETS: Asset[] = [
     description: "Cluster for web apps",
     createdAt: "2025-01-20T08:30:00Z",
     lastScan: "2025-02-02T09:30:00Z",
+    highestSeverity: "CRITICAL",
+    vulnerabilityCount: 1,
   },
 ]
 
@@ -59,10 +63,19 @@ describe("useAssetTable", () => {
     expect(result.current.visibleAssets.map((a) => a.id)).toEqual(["asset-1"])
   })
 
-  it("resetFilters restores the default criteria", () => {
+  it("narrows visibleAssets when setSeverity is called with a real value", () => {
     const { result } = renderHook(() => useAssetTable(ASSETS))
 
-    act(() => result.current.setQuery("frontend"))
+    act(() => result.current.setSeverity("CRITICAL"))
+
+    expect(result.current.visibleAssets.map((a) => a.id)).toEqual(["asset-2"])
+    expect(result.current.isFiltered).toBe(true)
+  })
+
+  it("resetFilters restores the default criteria, including severity", () => {
+    const { result } = renderHook(() => useAssetTable(ASSETS))
+
+    act(() => result.current.setSeverity("HIGH"))
     expect(result.current.isFiltered).toBe(true)
 
     act(() => result.current.resetFilters())
@@ -70,6 +83,7 @@ describe("useAssetTable", () => {
     expect(result.current.isFiltered).toBe(false)
     expect(result.current.visibleAssets).toEqual(ASSETS)
     expect(result.current.criteria.query).toBe("")
+    expect(result.current.criteria.severity).toBe("ALL")
   })
 
   it("never calls fetch — it only derives from the assets it is given", () => {
@@ -121,6 +135,17 @@ describe("useAssetTable", () => {
     expect(result.current.page).toBe(2)
 
     act(() => result.current.setQuery("frontend"))
+
+    expect(result.current.page).toBe(1)
+  })
+
+  it("resets to page 1 when setSeverity is called", () => {
+    const { result } = renderHook(() => useAssetTable(ASSETS, { pageSize: 1 }))
+
+    act(() => result.current.goToPage(2))
+    expect(result.current.page).toBe(2)
+
+    act(() => result.current.setSeverity("HIGH"))
 
     expect(result.current.page).toBe(1)
   })

@@ -1,15 +1,17 @@
 import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { AssetTable } from "./AssetTable"
-import type { Asset } from "@/lib/assets/types"
+import type { AssetWithSeverity } from "@/lib/assets/types"
 
-const ASSETS: Asset[] = [
+const ASSETS: AssetWithSeverity[] = [
   {
     id: "asset-1",
     name: "Production Server",
     description: "Main backend server",
     createdAt: "2025-01-10T12:00:00Z",
     lastScan: "2025-02-01T10:00:00Z",
+    highestSeverity: "HIGH",
+    vulnerabilityCount: 2,
   },
   {
     id: "asset-2",
@@ -17,11 +19,13 @@ const ASSETS: Asset[] = [
     description: "Cluster for web apps",
     createdAt: "2025-01-20T08:30:00Z",
     lastScan: "2025-02-02T09:30:00Z",
+    highestSeverity: "CRITICAL",
+    vulnerabilityCount: 1,
   },
 ]
 
 describe("AssetTable", () => {
-  it("renders a row for each asset from props with name/description/createdAt/lastScan and no severity column", () => {
+  it("renders a row for each asset from props with name/description/createdAt/lastScan/severity", () => {
     render(<AssetTable assets={ASSETS} />)
 
     expect(screen.getByText("Production Server")).toBeInTheDocument()
@@ -35,7 +39,9 @@ describe("AssetTable", () => {
     expect(screen.getByRole("columnheader", { name: "Descripción" })).toBeInTheDocument()
     expect(screen.getByRole("columnheader", { name: "Creado" })).toBeInTheDocument()
     expect(screen.getByRole("columnheader", { name: "Último escaneo" })).toBeInTheDocument()
-    expect(screen.queryByRole("columnheader", { name: /severidad/i })).not.toBeInTheDocument()
+    expect(screen.getByRole("columnheader", { name: "Severidad" })).toBeInTheDocument()
+    expect(screen.getByText("HIGH · 2 vulnerabilidades")).toBeInTheDocument()
+    expect(screen.getByText("CRITICAL · 1 vulnerabilidad")).toBeInTheDocument()
   })
 
   it("narrows the rendered rows when the user types in the filter", async () => {

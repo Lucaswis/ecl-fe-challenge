@@ -1,4 +1,37 @@
-import { test, expect } from "@playwright/test"
+import { test, expect, type Page } from "@playwright/test"
+
+const SEVERITY_LABELS: Record<string, string> = {
+  CRITICAL: "Crítica",
+  HIGH: "Alta",
+  MEDIUM: "Media",
+  LOW: "Baja",
+}
+
+async function selectSeverity(page: Page, value: keyof typeof SEVERITY_LABELS) {
+  await page.getByLabel("Severidad").click()
+  await page.getByRole("option", { name: SEVERITY_LABELS[value] }).click()
+}
+
+async function selectDate(page: Page, label: string, year: number, month: number, day: number) {
+  await page.getByLabel(label).click()
+
+  const grid = page.getByRole("grid")
+
+  for (let guard = 0; guard < 60; guard++) {
+    const caption = (await grid.getAttribute("aria-label")) ?? ""
+    const shown = new Date(`${caption} 1`)
+    const monthsToMove = (year - shown.getFullYear()) * 12 + (month - 1 - shown.getMonth())
+    if (monthsToMove === 0) break
+
+    const navLabel = monthsToMove > 0 ? "Go to the Next Month" : "Go to the Previous Month"
+    await page.getByRole("button", { name: navLabel }).click()
+  }
+
+  await grid
+    .locator("td:not([data-outside]) button")
+    .filter({ hasText: new RegExp(`^${day}$`) })
+    .click()
+}
 
 test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("lists the first page and navigates to the second", async ({ page }) => {
@@ -27,8 +60,8 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("narrows results with a date range", async ({ page }) => {
     await page.goto("/")
 
-    await page.getByLabel("Desde").fill("2025-01-01")
-    await page.getByLabel("Hasta").fill("2025-01-31")
+    await selectDate(page, "Desde", 2025, 1, 1)
+    await selectDate(page, "Hasta", 2025, 1, 31)
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(5)
   })
@@ -48,5 +81,46 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
       .click()
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(10)
+  })
+
+  test("narrows results with the severity filter", async ({ page }) => {
+    await page.goto("/")
+
+    await selectSeverity(page, "CRITICAL")
+
+    await expect(page.getByTestId("asset-table-row")).toHaveCount(3)
+  })
+
+  test("severity dropdown only offers real severity values, never Sin vulnerabilidades or N/D", async ({
+    page,
+  }) => {
+    await page.goto("/")
+
+    await page.getByLabel("Severidad").click()
+    const options = await page.getByRole("option").allTextContents()
+
+    expect(options).toEqual(["Todas", "Crítica", "Alta", "Media", "Baja"])
+  })
+
+  test("an asset whose vulnerabilities fetch fails shows N/D and is never reachable via the severity filter", async ({
+    page,
+  }) => {
+    await page.goto("/")
+
+    await page.getByLabel("Buscar").fill("Scanner Node")
+
+    await expect(page.getByTestId("asset-table-row")).toHaveCount(1)
+    await expect(page.getByText("N/D")).toBeVisible()
+
+    for (const value of ["CRITICAL", "HIGH", "MEDIUM", "LOW"] as const) {
+      await selectSeverity(page, value)
+      await expect(page.getByTestId("asset-table-row")).toHaveCount(0)
+    }
+  })
+
+  test("the listing badge shows the vulnerability count alongside the severity", async ({ page }) => {
+    await page.goto("/")
+
+    await expect(page.getByText("HIGH · 2 vulnerabilidades")).toBeVisible()
   })
 })

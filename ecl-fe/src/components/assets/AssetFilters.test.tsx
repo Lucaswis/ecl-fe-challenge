@@ -8,6 +8,19 @@ const CRITERIA: AssetFilterCriteria = {
   dateField: "createdAt",
   dateFrom: null,
   dateTo: null,
+  severity: "ALL",
+}
+
+async function findCalendarDay(day: string) {
+  const cells = await screen.findAllByRole("gridcell")
+  const match = cells.find(
+    (cell) => cell.textContent === day && !cell.hasAttribute("data-outside")
+  )
+
+  const button = match?.querySelector("button")
+  if (!button) throw new Error(`No calendar day found for "${day}"`)
+
+  return button
 }
 
 function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false) {
@@ -15,6 +28,7 @@ function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false)
   const onDateFieldChange = jest.fn()
   const onDateFromChange = jest.fn()
   const onDateToChange = jest.fn()
+  const onSeverityChange = jest.fn()
   const onReset = jest.fn()
 
   render(
@@ -24,12 +38,13 @@ function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false)
       onDateFieldChange={onDateFieldChange}
       onDateFromChange={onDateFromChange}
       onDateToChange={onDateToChange}
+      onSeverityChange={onSeverityChange}
       onReset={onReset}
       isFiltered={isFiltered}
     />
   )
 
-  return { onQueryChange, onDateFieldChange, onDateFromChange, onDateToChange, onReset }
+  return { onQueryChange, onDateFieldChange, onDateFromChange, onDateToChange, onSeverityChange, onReset }
 }
 
 describe("AssetFilters", () => {
@@ -48,22 +63,46 @@ describe("AssetFilters", () => {
     expect(onQueryChange).toHaveBeenCalledWith("a")
   })
 
-  it("calls onDateFromChange and onDateToChange when the date inputs change", async () => {
+  it("shows a placeholder when no date is selected", () => {
+    setup()
+
+    expect(screen.getByLabelText("Desde")).toHaveTextContent("Seleccionar fecha")
+    expect(screen.getByLabelText("Hasta")).toHaveTextContent("Seleccionar fecha")
+  })
+
+  it("shows the formatted date when dateFrom/dateTo are set", () => {
+    setup({ dateFrom: "2025-01-10", dateTo: "2025-01-31" })
+
+    expect(screen.getByLabelText("Desde")).toHaveTextContent("10 de enero de 2025")
+    expect(screen.getByLabelText("Hasta")).toHaveTextContent("31 de enero de 2025")
+  })
+
+  it("calls onDateFromChange with an ISO string when a day is picked from the calendar", async () => {
     const user = userEvent.setup()
-    const { onDateFromChange, onDateToChange } = setup()
+    const { onDateFromChange } = setup({ dateFrom: "2025-01-10" })
 
-    await user.type(screen.getByLabelText("Desde"), "2025-01-01")
-    await user.type(screen.getByLabelText("Hasta"), "2025-01-31")
+    await user.click(screen.getByLabelText("Desde"))
+    await user.click(await findCalendarDay("15"))
 
-    expect(onDateFromChange).toHaveBeenCalled()
-    expect(onDateToChange).toHaveBeenCalled()
+    expect(onDateFromChange).toHaveBeenCalledWith("2025-01-15")
+  })
+
+  it("calls onDateToChange with an ISO string when a day is picked from the calendar", async () => {
+    const user = userEvent.setup()
+    const { onDateToChange } = setup({ dateTo: "2025-01-10" })
+
+    await user.click(screen.getByLabelText("Hasta"))
+    await user.click(await findCalendarDay("20"))
+
+    expect(onDateToChange).toHaveBeenCalledWith("2025-01-20")
   })
 
   it("calls onDateFieldChange when the date field selector changes", async () => {
     const user = userEvent.setup()
     const { onDateFieldChange } = setup()
 
-    await user.selectOptions(screen.getByLabelText("Fecha de"), "lastScan")
+    await user.click(screen.getByLabelText("Fecha de"))
+    await user.click(await screen.findByRole("option", { name: "Último escaneo" }))
 
     expect(onDateFieldChange).toHaveBeenCalledWith("lastScan")
   })
@@ -86,9 +125,40 @@ describe("AssetFilters", () => {
     expect(onReset).toHaveBeenCalledTimes(1)
   })
 
-  it("does not render a severity filter (out of scope for this batch)", () => {
+  it("renders a severity select with exactly the four real severities plus Todas", async () => {
+    const user = userEvent.setup()
     setup()
 
-    expect(screen.queryByLabelText(/severidad/i)).not.toBeInTheDocument()
+    await user.click(screen.getByLabelText("Severidad"))
+    const options = await screen.findAllByRole("option")
+
+    expect(options.map((option) => option.textContent)).toEqual([
+      "Todas",
+      "Crítica",
+      "Alta",
+      "Media",
+      "Baja",
+    ])
+  })
+
+  it("does not offer Sin vulnerabilidades or N/D as severity filter options", async () => {
+    const user = userEvent.setup()
+    setup()
+
+    await user.click(screen.getByLabelText("Severidad"))
+    await screen.findAllByRole("option")
+
+    expect(screen.queryByText(/sin vulnerabilidades/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/n\/d/i)).not.toBeInTheDocument()
+  })
+
+  it("calls onSeverityChange when the severity select changes", async () => {
+    const user = userEvent.setup()
+    const { onSeverityChange } = setup()
+
+    await user.click(screen.getByLabelText("Severidad"))
+    await user.click(await screen.findByRole("option", { name: "Crítica" }))
+
+    expect(onSeverityChange).toHaveBeenCalledWith("CRITICAL")
   })
 })

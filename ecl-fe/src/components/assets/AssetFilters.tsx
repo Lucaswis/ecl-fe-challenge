@@ -1,11 +1,23 @@
 "use client"
 
 import { Field } from "@base-ui/react/field"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Calendar03Icon } from "@hugeicons/core-free-icons"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
-import type { AssetFilterCriteria, DateField } from "@/lib/assets/types"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { dateToIso, formatDisplayDate, isoToDate } from "@/lib/assets/date"
+import type { AssetFilterCriteria, DateField, SeverityFilterValue } from "@/lib/assets/types"
 
 interface AssetFiltersProps {
   criteria: AssetFilterCriteria
@@ -13,12 +25,62 @@ interface AssetFiltersProps {
   onDateFieldChange: (field: DateField) => void
   onDateFromChange: (date: string | null) => void
   onDateToChange: (date: string | null) => void
+  onSeverityChange: (severity: SeverityFilterValue) => void
   onReset: () => void
   isFiltered: boolean
 }
 
-const dateFieldSelectClassName =
-  "h-7 rounded-md border border-input bg-input/20 px-2 text-xs/relaxed outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 dark:bg-input/30"
+const DATE_FIELD_ITEMS: { value: DateField; label: string }[] = [
+  { value: "createdAt", label: "Creado" },
+  { value: "lastScan", label: "Último escaneo" },
+]
+
+const SEVERITY_ITEMS: { value: SeverityFilterValue; label: string }[] = [
+  { value: "ALL", label: "Todas" },
+  { value: "CRITICAL", label: "Crítica" },
+  { value: "HIGH", label: "Alta" },
+  { value: "MEDIUM", label: "Media" },
+  { value: "LOW", label: "Baja" },
+]
+
+interface DateFilterFieldProps {
+  id: string
+  label: string
+  value: string | null
+  onChange: (date: string | null) => void
+}
+
+function DateFilterField({ id, label, value, onChange }: DateFilterFieldProps) {
+  const [open, setOpen] = useState(false)
+  const selected = isoToDate(value)
+
+  return (
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id} className="text-xs font-medium text-muted-foreground">
+        {label}
+      </label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger
+          render={<Button id={id} variant="outline" size="sm" className="justify-start gap-1.5" />}
+        >
+          <HugeiconsIcon icon={Calendar03Icon} strokeWidth={2} className="size-3.5" />
+          {formatDisplayDate(value) ?? "Seleccionar fecha"}
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={selected}
+            defaultMonth={selected ?? new Date()}
+            onSelect={(date) => {
+              onChange(date ? dateToIso(date) : null)
+              setOpen(false)
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
+}
 
 export function AssetFilters({
   criteria,
@@ -26,6 +88,7 @@ export function AssetFilters({
   onDateFieldChange,
   onDateFromChange,
   onDateToChange,
+  onSeverityChange,
   onReset,
   isFiltered,
 }: AssetFiltersProps) {
@@ -51,40 +114,59 @@ export function AssetFilters({
         <label htmlFor="asset-date-field" className="text-xs font-medium text-muted-foreground">
           Fecha de
         </label>
-        <select
-          id="asset-date-field"
+        <Select
+          items={DATE_FIELD_ITEMS}
           value={criteria.dateField}
-          onChange={(event) => onDateFieldChange(event.target.value as DateField)}
-          className={cn(dateFieldSelectClassName)}
+          onValueChange={(value) => onDateFieldChange(value as DateField)}
         >
-          <option value="createdAt">Creado</option>
-          <option value="lastScan">Último escaneo</option>
-        </select>
+          <SelectTrigger id="asset-date-field">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {DATE_FIELD_ITEMS.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      <Field.Root className="flex flex-col gap-1">
-        <label htmlFor="asset-date-from" className="text-xs font-medium text-muted-foreground">
-          Desde
-        </label>
-        <Input
-          id="asset-date-from"
-          type="date"
-          value={criteria.dateFrom ?? ""}
-          onChange={(event) => onDateFromChange(event.target.value || null)}
-        />
-      </Field.Root>
+      <DateFilterField
+        id="asset-date-from"
+        label="Desde"
+        value={criteria.dateFrom}
+        onChange={onDateFromChange}
+      />
 
-      <Field.Root className="flex flex-col gap-1">
-        <label htmlFor="asset-date-to" className="text-xs font-medium text-muted-foreground">
-          Hasta
+      <DateFilterField
+        id="asset-date-to"
+        label="Hasta"
+        value={criteria.dateTo}
+        onChange={onDateToChange}
+      />
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="asset-severity" className="text-xs font-medium text-muted-foreground">
+          Severidad
         </label>
-        <Input
-          id="asset-date-to"
-          type="date"
-          value={criteria.dateTo ?? ""}
-          onChange={(event) => onDateToChange(event.target.value || null)}
-        />
-      </Field.Root>
+        <Select
+          items={SEVERITY_ITEMS}
+          value={criteria.severity}
+          onValueChange={(value) => onSeverityChange(value as SeverityFilterValue)}
+        >
+          <SelectTrigger id="asset-severity">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SEVERITY_ITEMS.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       <Button variant="outline" size="sm" onClick={onReset} disabled={!isFiltered}>
         Limpiar filtros
