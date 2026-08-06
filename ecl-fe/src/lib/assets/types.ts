@@ -23,6 +23,31 @@ export type AssetWithSeverity = Asset & {
   vulnerabilityCount: number
 }
 
+export interface Component {
+  id: string
+  name: string
+  version: string
+  vendor: string
+  type: string
+  createdAt: string
+  lastScan: string
+  assetId: string
+}
+
+export type AssetDetail = Asset & { components: string[] }
+
+export interface ComponentResult {
+  id: string
+  data: Component | null
+  error: boolean
+}
+
+export interface AssetDetailView {
+  asset: AssetDetail
+  components: ComponentResult[]
+  vulnerabilities: Vulnerability[] | null
+}
+
 export type SeverityFilterValue = Severity | "ALL"
 
 export interface AssetFilterCriteria {
