@@ -12,6 +12,27 @@ async function selectSeverity(page: Page, value: keyof typeof SEVERITY_LABELS) {
   await page.getByRole("option", { name: SEVERITY_LABELS[value] }).click()
 }
 
+async function selectDate(page: Page, label: string, year: number, month: number, day: number) {
+  await page.getByLabel(label).click()
+
+  const grid = page.getByRole("grid")
+
+  for (let guard = 0; guard < 60; guard++) {
+    const caption = (await grid.getAttribute("aria-label")) ?? ""
+    const shown = new Date(`${caption} 1`)
+    const monthsToMove = (year - shown.getFullYear()) * 12 + (month - 1 - shown.getMonth())
+    if (monthsToMove === 0) break
+
+    const navLabel = monthsToMove > 0 ? "Go to the Next Month" : "Go to the Previous Month"
+    await page.getByRole("button", { name: navLabel }).click()
+  }
+
+  await grid
+    .locator("td:not([data-outside]) button")
+    .filter({ hasText: new RegExp(`^${day}$`) })
+    .click()
+}
+
 test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("lists the first page and navigates to the second", async ({ page }) => {
     await page.goto("/")
@@ -39,8 +60,8 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("narrows results with a date range", async ({ page }) => {
     await page.goto("/")
 
-    await page.getByLabel("Desde").fill("2025-01-01")
-    await page.getByLabel("Hasta").fill("2025-01-31")
+    await selectDate(page, "Desde", 2025, 1, 1)
+    await selectDate(page, "Hasta", 2025, 1, 31)
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(5)
   })

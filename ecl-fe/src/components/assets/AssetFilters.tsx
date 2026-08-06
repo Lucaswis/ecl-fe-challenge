@@ -1,9 +1,14 @@
 "use client"
 
 import { Field } from "@base-ui/react/field"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Calendar03Icon } from "@hugeicons/core-free-icons"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
@@ -11,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { dateToIso, formatDisplayDate, isoToDate } from "@/lib/assets/date"
 import type { AssetFilterCriteria, DateField, SeverityFilterValue } from "@/lib/assets/types"
 
 interface AssetFiltersProps {
@@ -36,6 +42,45 @@ const SEVERITY_ITEMS: { value: SeverityFilterValue; label: string }[] = [
   { value: "MEDIUM", label: "Media" },
   { value: "LOW", label: "Baja" },
 ]
+
+interface DateFilterFieldProps {
+  id: string
+  label: string
+  value: string | null
+  onChange: (date: string | null) => void
+}
+
+function DateFilterField({ id, label, value, onChange }: DateFilterFieldProps) {
+  const [open, setOpen] = useState(false)
+  const selected = isoToDate(value)
+
+  return (
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id} className="text-xs font-medium text-muted-foreground">
+        {label}
+      </label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger
+          render={<Button id={id} variant="outline" size="sm" className="justify-start gap-1.5" />}
+        >
+          <HugeiconsIcon icon={Calendar03Icon} strokeWidth={2} className="size-3.5" />
+          {formatDisplayDate(value) ?? "Seleccionar fecha"}
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={selected}
+            defaultMonth={selected ?? new Date()}
+            onSelect={(date) => {
+              onChange(date ? dateToIso(date) : null)
+              setOpen(false)
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
+}
 
 export function AssetFilters({
   criteria,
@@ -87,29 +132,19 @@ export function AssetFilters({
         </Select>
       </div>
 
-      <Field.Root className="flex flex-col gap-1">
-        <label htmlFor="asset-date-from" className="text-xs font-medium text-muted-foreground">
-          Desde
-        </label>
-        <Input
-          id="asset-date-from"
-          type="date"
-          value={criteria.dateFrom ?? ""}
-          onChange={(event) => onDateFromChange(event.target.value || null)}
-        />
-      </Field.Root>
+      <DateFilterField
+        id="asset-date-from"
+        label="Desde"
+        value={criteria.dateFrom}
+        onChange={onDateFromChange}
+      />
 
-      <Field.Root className="flex flex-col gap-1">
-        <label htmlFor="asset-date-to" className="text-xs font-medium text-muted-foreground">
-          Hasta
-        </label>
-        <Input
-          id="asset-date-to"
-          type="date"
-          value={criteria.dateTo ?? ""}
-          onChange={(event) => onDateToChange(event.target.value || null)}
-        />
-      </Field.Root>
+      <DateFilterField
+        id="asset-date-to"
+        label="Hasta"
+        value={criteria.dateTo}
+        onChange={onDateToChange}
+      />
 
       <div className="flex flex-col gap-1">
         <label htmlFor="asset-severity" className="text-xs font-medium text-muted-foreground">

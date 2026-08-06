@@ -11,6 +11,18 @@ const CRITERIA: AssetFilterCriteria = {
   severity: "ALL",
 }
 
+async function findCalendarDay(day: string) {
+  const cells = await screen.findAllByRole("gridcell")
+  const match = cells.find(
+    (cell) => cell.textContent === day && !cell.hasAttribute("data-outside")
+  )
+
+  const button = match?.querySelector("button")
+  if (!button) throw new Error(`No calendar day found for "${day}"`)
+
+  return button
+}
+
 function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false) {
   const onQueryChange = jest.fn()
   const onDateFieldChange = jest.fn()
@@ -51,15 +63,38 @@ describe("AssetFilters", () => {
     expect(onQueryChange).toHaveBeenCalledWith("a")
   })
 
-  it("calls onDateFromChange and onDateToChange when the date inputs change", async () => {
+  it("shows a placeholder when no date is selected", () => {
+    setup()
+
+    expect(screen.getByLabelText("Desde")).toHaveTextContent("Seleccionar fecha")
+    expect(screen.getByLabelText("Hasta")).toHaveTextContent("Seleccionar fecha")
+  })
+
+  it("shows the formatted date when dateFrom/dateTo are set", () => {
+    setup({ dateFrom: "2025-01-10", dateTo: "2025-01-31" })
+
+    expect(screen.getByLabelText("Desde")).toHaveTextContent("10 de enero de 2025")
+    expect(screen.getByLabelText("Hasta")).toHaveTextContent("31 de enero de 2025")
+  })
+
+  it("calls onDateFromChange with an ISO string when a day is picked from the calendar", async () => {
     const user = userEvent.setup()
-    const { onDateFromChange, onDateToChange } = setup()
+    const { onDateFromChange } = setup({ dateFrom: "2025-01-10" })
 
-    await user.type(screen.getByLabelText("Desde"), "2025-01-01")
-    await user.type(screen.getByLabelText("Hasta"), "2025-01-31")
+    await user.click(screen.getByLabelText("Desde"))
+    await user.click(await findCalendarDay("15"))
 
-    expect(onDateFromChange).toHaveBeenCalled()
-    expect(onDateToChange).toHaveBeenCalled()
+    expect(onDateFromChange).toHaveBeenCalledWith("2025-01-15")
+  })
+
+  it("calls onDateToChange with an ISO string when a day is picked from the calendar", async () => {
+    const user = userEvent.setup()
+    const { onDateToChange } = setup({ dateTo: "2025-01-10" })
+
+    await user.click(screen.getByLabelText("Hasta"))
+    await user.click(await findCalendarDay("20"))
+
+    expect(onDateToChange).toHaveBeenCalledWith("2025-01-20")
   })
 
   it("calls onDateFieldChange when the date field selector changes", async () => {
