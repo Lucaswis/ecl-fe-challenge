@@ -1,4 +1,16 @@
-import { test, expect } from "@playwright/test"
+import { test, expect, type Page } from "@playwright/test"
+
+const SEVERITY_LABELS: Record<string, string> = {
+  CRITICAL: "Crítica",
+  HIGH: "Alta",
+  MEDIUM: "Media",
+  LOW: "Baja",
+}
+
+async function selectSeverity(page: Page, value: keyof typeof SEVERITY_LABELS) {
+  await page.getByLabel("Severidad").click()
+  await page.getByRole("option", { name: SEVERITY_LABELS[value] }).click()
+}
 
 test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("lists the first page and navigates to the second", async ({ page }) => {
@@ -53,7 +65,7 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("narrows results with the severity filter", async ({ page }) => {
     await page.goto("/")
 
-    await page.getByLabel("Severidad").selectOption("CRITICAL")
+    await selectSeverity(page, "CRITICAL")
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(3)
   })
@@ -63,7 +75,8 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   }) => {
     await page.goto("/")
 
-    const options = await page.getByLabel("Severidad").locator("option").allTextContents()
+    await page.getByLabel("Severidad").click()
+    const options = await page.getByRole("option").allTextContents()
 
     expect(options).toEqual(["Todas", "Crítica", "Alta", "Media", "Baja"])
   })
@@ -78,8 +91,8 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
     await expect(page.getByTestId("asset-table-row")).toHaveCount(1)
     await expect(page.getByText("N/D")).toBeVisible()
 
-    for (const value of ["CRITICAL", "HIGH", "MEDIUM", "LOW"]) {
-      await page.getByLabel("Severidad").selectOption(value)
+    for (const value of ["CRITICAL", "HIGH", "MEDIUM", "LOW"] as const) {
+      await selectSeverity(page, value)
       await expect(page.getByTestId("asset-table-row")).toHaveCount(0)
     }
   })

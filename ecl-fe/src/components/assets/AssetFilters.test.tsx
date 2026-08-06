@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { AssetFilters } from "./AssetFilters"
 import type { AssetFilterCriteria } from "@/lib/assets/types"
@@ -66,7 +66,8 @@ describe("AssetFilters", () => {
     const user = userEvent.setup()
     const { onDateFieldChange } = setup()
 
-    await user.selectOptions(screen.getByLabelText("Fecha de"), "lastScan")
+    await user.click(screen.getByLabelText("Fecha de"))
+    await user.click(await screen.findByRole("option", { name: "Último escaneo" }))
 
     expect(onDateFieldChange).toHaveBeenCalledWith("lastScan")
   })
@@ -89,11 +90,12 @@ describe("AssetFilters", () => {
     expect(onReset).toHaveBeenCalledTimes(1)
   })
 
-  it("renders a severity select with exactly the four real severities plus Todas", () => {
+  it("renders a severity select with exactly the four real severities plus Todas", async () => {
+    const user = userEvent.setup()
     setup()
 
-    const select = screen.getByLabelText("Severidad")
-    const options = within(select).getAllByRole("option")
+    await user.click(screen.getByLabelText("Severidad"))
+    const options = await screen.findAllByRole("option")
 
     expect(options.map((option) => option.textContent)).toEqual([
       "Todas",
@@ -104,20 +106,23 @@ describe("AssetFilters", () => {
     ])
   })
 
-  it("does not offer Sin vulnerabilidades or N/D as severity filter options", () => {
+  it("does not offer Sin vulnerabilidades or N/D as severity filter options", async () => {
+    const user = userEvent.setup()
     setup()
 
-    const select = screen.getByLabelText("Severidad")
+    await user.click(screen.getByLabelText("Severidad"))
+    await screen.findAllByRole("option")
 
-    expect(within(select).queryByText(/sin vulnerabilidades/i)).not.toBeInTheDocument()
-    expect(within(select).queryByText(/n\/d/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/sin vulnerabilidades/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/n\/d/i)).not.toBeInTheDocument()
   })
 
   it("calls onSeverityChange when the severity select changes", async () => {
     const user = userEvent.setup()
     const { onSeverityChange } = setup()
 
-    await user.selectOptions(screen.getByLabelText("Severidad"), "CRITICAL")
+    await user.click(screen.getByLabelText("Severidad"))
+    await user.click(await screen.findByRole("option", { name: "Crítica" }))
 
     expect(onSeverityChange).toHaveBeenCalledWith("CRITICAL")
   })

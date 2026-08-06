@@ -4,7 +4,13 @@ import { Field } from "@base-ui/react/field"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { AssetFilterCriteria, DateField, SeverityFilterValue } from "@/lib/assets/types"
 
 interface AssetFiltersProps {
@@ -18,8 +24,18 @@ interface AssetFiltersProps {
   isFiltered: boolean
 }
 
-const dateFieldSelectClassName =
-  "h-7 rounded-md border border-input bg-input/20 px-2 text-xs/relaxed outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 dark:bg-input/30"
+const DATE_FIELD_ITEMS: { value: DateField; label: string }[] = [
+  { value: "createdAt", label: "Creado" },
+  { value: "lastScan", label: "Último escaneo" },
+]
+
+const SEVERITY_ITEMS: { value: SeverityFilterValue; label: string }[] = [
+  { value: "ALL", label: "Todas" },
+  { value: "CRITICAL", label: "Crítica" },
+  { value: "HIGH", label: "Alta" },
+  { value: "MEDIUM", label: "Media" },
+  { value: "LOW", label: "Baja" },
+]
 
 export function AssetFilters({
   criteria,
@@ -53,15 +69,22 @@ export function AssetFilters({
         <label htmlFor="asset-date-field" className="text-xs font-medium text-muted-foreground">
           Fecha de
         </label>
-        <select
-          id="asset-date-field"
+        <Select
+          items={DATE_FIELD_ITEMS}
           value={criteria.dateField}
-          onChange={(event) => onDateFieldChange(event.target.value as DateField)}
-          className={cn(dateFieldSelectClassName)}
+          onValueChange={(value) => onDateFieldChange(value as DateField)}
         >
-          <option value="createdAt">Creado</option>
-          <option value="lastScan">Último escaneo</option>
-        </select>
+          <SelectTrigger id="asset-date-field">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {DATE_FIELD_ITEMS.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <Field.Root className="flex flex-col gap-1">
@@ -92,18 +115,22 @@ export function AssetFilters({
         <label htmlFor="asset-severity" className="text-xs font-medium text-muted-foreground">
           Severidad
         </label>
-        <select
-          id="asset-severity"
+        <Select
+          items={SEVERITY_ITEMS}
           value={criteria.severity}
-          onChange={(event) => onSeverityChange(event.target.value as SeverityFilterValue)}
-          className={cn(dateFieldSelectClassName)}
+          onValueChange={(value) => onSeverityChange(value as SeverityFilterValue)}
         >
-          <option value="ALL">Todas</option>
-          <option value="CRITICAL">Crítica</option>
-          <option value="HIGH">Alta</option>
-          <option value="MEDIUM">Media</option>
-          <option value="LOW">Baja</option>
-        </select>
+          <SelectTrigger id="asset-severity">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {SEVERITY_ITEMS.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <Button variant="outline" size="sm" onClick={onReset} disabled={!isFiltered}>
