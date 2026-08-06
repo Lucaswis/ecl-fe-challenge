@@ -41,4 +41,11 @@ describe("SeverityBadge", () => {
 
     expect(container.textContent).not.toBe("")
   })
+
+  it("renders the bare severity with no count suffix when vulnerabilityCount is omitted", () => {
+    render(<SeverityBadge severity="HIGH" />)
+
+    expect(screen.getByText("HIGH")).toBeInTheDocument()
+    expect(screen.queryByText(/vulnerabilidad/i)).not.toBeInTheDocument()
+  })
 })
