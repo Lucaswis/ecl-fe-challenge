@@ -6,10 +6,10 @@ import { AssetPagination } from "@/components/assets/AssetPagination"
 import { AssetTableRow } from "@/components/assets/AssetTableRow"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useAssetTable } from "@/hooks/use-asset-table"
-import type { Asset } from "@/lib/assets/types"
+import type { AssetWithSeverity } from "@/lib/assets/types"
 
 interface AssetTableProps {
-  assets: Asset[]
+  assets: AssetWithSeverity[]
 }
 
 export function AssetTable({ assets }: AssetTableProps) {
@@ -19,6 +19,7 @@ export function AssetTable({ assets }: AssetTableProps) {
     setDateField,
     setDateFrom,
     setDateTo,
+    setSeverity,
     resetFilters,
     isFiltered,
     totalCount,
@@ -38,6 +39,7 @@ export function AssetTable({ assets }: AssetTableProps) {
         onDateFieldChange={setDateField}
         onDateFromChange={setDateFrom}
         onDateToChange={setDateTo}
+        onSeverityChange={setSeverity}
         onReset={resetFilters}
         isFiltered={isFiltered}
       />
@@ -54,6 +56,7 @@ export function AssetTable({ assets }: AssetTableProps) {
               <TableHead>Descripción</TableHead>
               <TableHead>Creado</TableHead>
               <TableHead>Último escaneo</TableHead>
+              <TableHead>Severidad</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { AssetFilters } from "./AssetFilters"
 import type { AssetFilterCriteria } from "@/lib/assets/types"
@@ -8,6 +8,7 @@ const CRITERIA: AssetFilterCriteria = {
   dateField: "createdAt",
   dateFrom: null,
   dateTo: null,
+  severity: "ALL",
 }
 
 function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false) {
@@ -15,6 +16,7 @@ function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false)
   const onDateFieldChange = jest.fn()
   const onDateFromChange = jest.fn()
   const onDateToChange = jest.fn()
+  const onSeverityChange = jest.fn()
   const onReset = jest.fn()
 
   render(
@@ -24,12 +26,13 @@ function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false)
       onDateFieldChange={onDateFieldChange}
       onDateFromChange={onDateFromChange}
       onDateToChange={onDateToChange}
+      onSeverityChange={onSeverityChange}
       onReset={onReset}
       isFiltered={isFiltered}
     />
   )
 
-  return { onQueryChange, onDateFieldChange, onDateFromChange, onDateToChange, onReset }
+  return { onQueryChange, onDateFieldChange, onDateFromChange, onDateToChange, onSeverityChange, onReset }
 }
 
 describe("AssetFilters", () => {
@@ -86,9 +89,36 @@ describe("AssetFilters", () => {
     expect(onReset).toHaveBeenCalledTimes(1)
   })
 
-  it("does not render a severity filter (out of scope for this batch)", () => {
+  it("renders a severity select with exactly the four real severities plus Todas", () => {
     setup()
 
-    expect(screen.queryByLabelText(/severidad/i)).not.toBeInTheDocument()
+    const select = screen.getByLabelText("Severidad")
+    const options = within(select).getAllByRole("option")
+
+    expect(options.map((option) => option.textContent)).toEqual([
+      "Todas",
+      "Crítica",
+      "Alta",
+      "Media",
+      "Baja",
+    ])
+  })
+
+  it("does not offer Sin vulnerabilidades or N/D as severity filter options", () => {
+    setup()
+
+    const select = screen.getByLabelText("Severidad")
+
+    expect(within(select).queryByText(/sin vulnerabilidades/i)).not.toBeInTheDocument()
+    expect(within(select).queryByText(/n\/d/i)).not.toBeInTheDocument()
+  })
+
+  it("calls onSeverityChange when the severity select changes", async () => {
+    const user = userEvent.setup()
+    const { onSeverityChange } = setup()
+
+    await user.selectOptions(screen.getByLabelText("Severidad"), "CRITICAL")
+
+    expect(onSeverityChange).toHaveBeenCalledWith("CRITICAL")
   })
 })

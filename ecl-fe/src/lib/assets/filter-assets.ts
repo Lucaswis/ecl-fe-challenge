@@ -1,6 +1,9 @@
-import type { Asset, AssetFilterCriteria } from "./types"
+import type { AssetFilterCriteria, AssetWithSeverity } from "./types"
 
-export function filterAssets(assets: Asset[], criteria: AssetFilterCriteria): Asset[] {
+export function filterAssets(
+  assets: AssetWithSeverity[],
+  criteria: AssetFilterCriteria
+): AssetWithSeverity[] {
   const query = criteria.query.trim().toLowerCase()
 
   return assets.filter((asset) => {
@@ -14,6 +17,8 @@ export function filterAssets(assets: Asset[], criteria: AssetFilterCriteria): As
     const day = asset[criteria.dateField].slice(0, 10)
     if (criteria.dateFrom && day < criteria.dateFrom) return false
     if (criteria.dateTo && day > criteria.dateTo) return false
+
+    if (criteria.severity !== "ALL" && asset.highestSeverity !== criteria.severity) return false
 
     return true
   })

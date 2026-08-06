@@ -1,8 +1,8 @@
 import { AssetTable } from "@/components/assets/AssetTable"
-import { getAssets } from "@/lib/assets/get-assets"
+import { getAssetsWithSeverity } from "@/lib/assets/get-assets-with-severity"
 
 export default async function Home() {
-  const assets = await getAssets()
+  const assets = await getAssetsWithSeverity()
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-6 py-10 sm:px-10">

@@ -1,13 +1,15 @@
 import { filterAssets } from "./filter-assets"
-import type { Asset, AssetFilterCriteria } from "./types"
+import type { AssetFilterCriteria, AssetWithSeverity } from "./types"
 
-const ASSETS: Asset[] = [
+const ASSETS: AssetWithSeverity[] = [
   {
     id: "asset-1",
     name: "Production Server",
     description: "Main backend server",
     createdAt: "2025-01-10T12:00:00Z",
     lastScan: "2025-02-01T10:00:00Z",
+    highestSeverity: "HIGH",
+    vulnerabilityCount: 2,
   },
   {
     id: "asset-2",
@@ -15,6 +17,8 @@ const ASSETS: Asset[] = [
     description: "Cluster for web apps",
     createdAt: "2025-01-20T08:30:00Z",
     lastScan: "2025-02-02T09:30:00Z",
+    highestSeverity: "CRITICAL",
+    vulnerabilityCount: 2,
   },
   {
     id: "asset-3",
@@ -22,6 +26,17 @@ const ASSETS: Asset[] = [
     description: "Batch SERVER jobs",
     createdAt: "2025-03-05T00:00:00Z",
     lastScan: "2025-01-05T00:00:00Z",
+    highestSeverity: "NONE",
+    vulnerabilityCount: 0,
+  },
+  {
+    id: "asset-4",
+    name: "Legacy Gateway",
+    description: "Old edge gateway",
+    createdAt: "2025-02-10T00:00:00Z",
+    lastScan: "2025-02-15T00:00:00Z",
+    highestSeverity: null,
+    vulnerabilityCount: 0,
   },
 ]
 
@@ -30,6 +45,7 @@ const BASE_CRITERIA: AssetFilterCriteria = {
   dateField: "createdAt",
   dateFrom: null,
   dateTo: null,
+  severity: "ALL",
 }
 
 describe("filterAssets", () => {
@@ -58,7 +74,7 @@ describe("filterAssets", () => {
   it("includes assets on the exact dateFrom boundary (inclusive)", () => {
     const result = filterAssets(ASSETS, { ...BASE_CRITERIA, dateFrom: "2025-01-10" })
 
-    expect(result.map((a) => a.id).sort()).toEqual(["asset-1", "asset-2", "asset-3"])
+    expect(result.map((a) => a.id).sort()).toEqual(["asset-1", "asset-2", "asset-3", "asset-4"])
   })
 
   it("includes assets on the exact dateTo boundary (inclusive)", () => {
@@ -93,6 +109,34 @@ describe("filterAssets", () => {
       ...BASE_CRITERIA,
       query: "server",
       dateTo: "2025-01-15",
+    })
+
+    expect(result.map((a) => a.id)).toEqual(["asset-1"])
+  })
+
+  it("passes through every asset when severity is ALL", () => {
+    expect(filterAssets(ASSETS, { ...BASE_CRITERIA, severity: "ALL" })).toEqual(ASSETS)
+  })
+
+  it("matches only assets with the selected real severity value", () => {
+    const result = filterAssets(ASSETS, { ...BASE_CRITERIA, severity: "HIGH" })
+
+    expect(result.map((a) => a.id)).toEqual(["asset-1"])
+  })
+
+  it("never matches NONE or null assets against a real severity filter", () => {
+    const result = filterAssets(ASSETS, { ...BASE_CRITERIA, severity: "CRITICAL" })
+
+    expect(result.map((a) => a.id)).toEqual(["asset-2"])
+    expect(result.map((a) => a.id)).not.toContain("asset-3")
+    expect(result.map((a) => a.id)).not.toContain("asset-4")
+  })
+
+  it("combines the severity filter with query/date via AND semantics", () => {
+    const result = filterAssets(ASSETS, {
+      ...BASE_CRITERIA,
+      query: "server",
+      severity: "HIGH",
     })
 
     expect(result.map((a) => a.id)).toEqual(["asset-1"])

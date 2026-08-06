@@ -5,7 +5,7 @@ import { Field } from "@base-ui/react/field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import type { AssetFilterCriteria, DateField } from "@/lib/assets/types"
+import type { AssetFilterCriteria, DateField, SeverityFilterValue } from "@/lib/assets/types"
 
 interface AssetFiltersProps {
   criteria: AssetFilterCriteria
@@ -13,6 +13,7 @@ interface AssetFiltersProps {
   onDateFieldChange: (field: DateField) => void
   onDateFromChange: (date: string | null) => void
   onDateToChange: (date: string | null) => void
+  onSeverityChange: (severity: SeverityFilterValue) => void
   onReset: () => void
   isFiltered: boolean
 }
@@ -26,6 +27,7 @@ export function AssetFilters({
   onDateFieldChange,
   onDateFromChange,
   onDateToChange,
+  onSeverityChange,
   onReset,
   isFiltered,
 }: AssetFiltersProps) {
@@ -85,6 +87,24 @@ export function AssetFilters({
           onChange={(event) => onDateToChange(event.target.value || null)}
         />
       </Field.Root>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="asset-severity" className="text-xs font-medium text-muted-foreground">
+          Severidad
+        </label>
+        <select
+          id="asset-severity"
+          value={criteria.severity}
+          onChange={(event) => onSeverityChange(event.target.value as SeverityFilterValue)}
+          className={cn(dateFieldSelectClassName)}
+        >
+          <option value="ALL">Todas</option>
+          <option value="CRITICAL">Crítica</option>
+          <option value="HIGH">Alta</option>
+          <option value="MEDIUM">Media</option>
+          <option value="LOW">Baja</option>
+        </select>
+      </div>
 
       <Button variant="outline" size="sm" onClick={onReset} disabled={!isFiltered}>
         Limpiar filtros
