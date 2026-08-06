@@ -5,6 +5,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import { resolveLocale } from "@/lib/i18n/dictionaries";
 import { LOCALE_COOKIE } from "@/lib/i18n/types";
 
@@ -37,7 +38,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <Providers locale={locale}>
           <Header />
-          {children}
+          <div className="flex flex-1 flex-col">{children}</div>
+          <Footer />
         </Providers>
       </body>
     </html>

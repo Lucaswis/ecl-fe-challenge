@@ -5,4 +5,5 @@ export const es: Dictionary = {
   "header.theme.toggle": "Cambiar tema",
   "header.language.switchTo": "Cambiar a {locale}",
   "assetDetail.backToListing": "Volver al listado",
+  "footer.createdBy": "Creado por",
 }
