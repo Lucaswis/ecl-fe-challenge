@@ -18,6 +18,15 @@ test.describe("asset detail view", () => {
     await expect(page.getByText("MEDIUM", { exact: true })).toBeVisible()
   })
 
+  test("navigates back to the listing via the back link", async ({ page }) => {
+    await page.goto("/assets/asset-1")
+
+    await page.getByRole("link", { name: "Volver al listado" }).click()
+
+    await expect(page).toHaveURL(/\/$/)
+    await expect(page.getByRole("heading", { name: "Assets" })).toBeVisible()
+  })
+
   test("shows an empty-components state and a vulnerabilities-unavailable notice for asset-13, without crashing", async ({
     page,
   }) => {
