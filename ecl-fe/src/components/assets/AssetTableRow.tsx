@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { SeverityBadge } from "@/components/assets/SeverityBadge"
 import { TableCell, TableRow } from "@/components/ui/table"
 import type { AssetWithSeverity } from "@/lib/assets/types"
@@ -18,7 +20,11 @@ export function AssetTableRow({ asset, index }: AssetTableRowProps) {
       className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1"
       style={{ animationDelay: `${Math.min(index, 8) * 20}ms` }}
     >
-      <TableCell className="font-medium">{asset.name}</TableCell>
+      <TableCell className="font-medium">
+        <Link href={`/assets/${asset.id}`} className="hover:underline">
+          {asset.name}
+        </Link>
+      </TableCell>
       <TableCell className="max-w-xs truncate text-muted-foreground">
         {asset.description}
       </TableCell>
