@@ -123,4 +123,12 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
 
     await expect(page.getByText("HIGH · 2 vulnerabilidades")).toBeVisible()
   })
+
+  test("clicking an asset name navigates to its detail route", async ({ page }) => {
+    await page.goto("/")
+
+    await page.getByRole("link", { name: "Production Server" }).click()
+
+    await expect(page).toHaveURL(/\/assets\/asset-1$/)
+  })
 })
