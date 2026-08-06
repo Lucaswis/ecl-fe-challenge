@@ -28,7 +28,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. The app expects the mock backend at `http://localhost:8080` by default (see `.env.example` — `BACKEND_URL`, server-side only, never exposed to the browser).
+Open `http://localhost:3000`. It talks to the mock backend at `http://localhost:8080` out of the box — no `.env` file needed for the default setup. If you want to point it somewhere else, copy `.env.example` to `.env.local` and set `BACKEND_URL` (server-side only, never exposed to the browser).
 
 If Docker isn't running, the app doesn't crash — you'll see an error screen with a retry button, which is intentional (it's one of the things the app is built to handle gracefully, not a bug).
 
