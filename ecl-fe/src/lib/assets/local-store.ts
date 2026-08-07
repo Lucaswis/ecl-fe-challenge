@@ -1,7 +1,16 @@
+import { highestSeverityOf } from "./severity"
 import type { AssetWithSeverity, LocalAsset } from "./types"
 
-function asAssetWithSeverity(local: LocalAsset): AssetWithSeverity {
-  return { ...local, highestSeverity: null, vulnerabilityCount: local.vulnerabilities.length }
+export function toAssetWithSeverity(local: LocalAsset): AssetWithSeverity {
+  return {
+    id: local.id,
+    name: local.name,
+    description: local.description,
+    createdAt: local.createdAt,
+    lastScan: local.lastScan,
+    highestSeverity: highestSeverityOf(local.vulnerabilities),
+    vulnerabilityCount: local.vulnerabilities.length,
+  }
 }
 
 export function mergeAssets(
@@ -9,5 +18,5 @@ export function mergeAssets(
   created: LocalAsset[],
   deletedIds: ReadonlySet<string>
 ): AssetWithSeverity[] {
-  return [...created.map(asAssetWithSeverity), ...base].filter((asset) => !deletedIds.has(asset.id))
+  return [...created.map(toAssetWithSeverity), ...base].filter((asset) => !deletedIds.has(asset.id))
 }
