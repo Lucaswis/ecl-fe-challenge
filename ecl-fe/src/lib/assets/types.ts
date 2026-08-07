@@ -48,6 +48,11 @@ export interface AssetDetailView {
   vulnerabilities: Vulnerability[] | null
 }
 
+export interface LocalAsset extends Asset {
+  components: Component[]
+  vulnerabilities: Vulnerability[]
+}
+
 export type SeverityFilterValue = Severity | "ALL"
 
 export interface AssetFilterCriteria {
