@@ -2,7 +2,15 @@ import { screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
 import { AssetTable } from "./AssetTable"
+import { mergeAssets } from "@/lib/assets/local-store"
 import type { AssetWithSeverity } from "@/lib/assets/types"
+
+jest.mock("../../lib/assets/local-store", () => {
+  const actual = jest.requireActual("../../lib/assets/local-store")
+  return { ...actual, mergeAssets: jest.fn(actual.mergeAssets) }
+})
+
+const mockedMergeAssets = mergeAssets as jest.MockedFunction<typeof mergeAssets>
 
 const ASSETS: AssetWithSeverity[] = [
   {
@@ -91,6 +99,12 @@ describe("AssetTable", () => {
     expect(screen.getByRole("columnheader", { name: "Created" })).toBeInTheDocument()
     expect(screen.getByRole("columnheader", { name: "Last scan" })).toBeInTheDocument()
     expect(screen.getByRole("columnheader", { name: "Severity" })).toBeInTheDocument()
+  })
+
+  it("merges an empty store into the table as a content no-op against the assets prop", () => {
+    renderWithLocale(<AssetTable assets={ASSETS} />)
+
+    expect(mockedMergeAssets).toHaveBeenCalledWith(ASSETS, [], new Set())
   })
 
   it("keeps the surviving row's DOM node stable when an earlier row gets filtered out", async () => {
