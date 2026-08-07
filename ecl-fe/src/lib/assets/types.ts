@@ -53,6 +53,27 @@ export interface LocalAsset extends Asset {
   vulnerabilities: Vulnerability[]
 }
 
+export interface ComponentDraft {
+  key: string
+  name: string
+  version: string
+  vendor: string
+  type: string
+}
+
+export interface VulnerabilityDraft {
+  key: string
+  description: string
+  severity: Severity
+}
+
+export interface CreateAssetFormState {
+  name: string
+  description: string
+  components: ComponentDraft[]
+  vulnerabilities: VulnerabilityDraft[]
+}
+
 export type SeverityFilterValue = Severity | "ALL"
 
 export interface AssetFilterCriteria {
