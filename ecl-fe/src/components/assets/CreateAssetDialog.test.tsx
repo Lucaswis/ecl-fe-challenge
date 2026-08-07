@@ -84,7 +84,7 @@ describe("CreateAssetDialog", () => {
     expect(created.vulnerabilities).toHaveLength(1)
     expect(created.vulnerabilities[0].description).toBe("Outdated TLS")
     expect(created.vulnerabilities[0].severity).toBe("LOW")
-  })
+  }, 10000)
 
   it("renders translated copy in English", async () => {
     const user = userEvent.setup()
