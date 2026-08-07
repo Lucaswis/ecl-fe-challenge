@@ -1,5 +1,7 @@
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { renderWithLocale } from "@/test-utils/render-with-locale"
+import type { Locale } from "@/lib/i18n/types"
 import { AssetFilters } from "./AssetFilters"
 import type { AssetFilterCriteria } from "@/lib/assets/types"
 
@@ -23,7 +25,7 @@ async function findCalendarDay(day: string) {
   return button
 }
 
-function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false) {
+function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false, locale: Locale = "es") {
   const onQueryChange = jest.fn()
   const onDateFieldChange = jest.fn()
   const onDateFromChange = jest.fn()
@@ -31,7 +33,7 @@ function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false)
   const onSeverityChange = jest.fn()
   const onReset = jest.fn()
 
-  render(
+  renderWithLocale(
     <AssetFilters
       criteria={{ ...CRITERIA, ...overrides }}
       onQueryChange={onQueryChange}
@@ -41,7 +43,8 @@ function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false)
       onSeverityChange={onSeverityChange}
       onReset={onReset}
       isFiltered={isFiltered}
-    />
+    />,
+    locale
   )
 
   return { onQueryChange, onDateFieldChange, onDateFromChange, onDateToChange, onSeverityChange, onReset }
@@ -160,5 +163,36 @@ describe("AssetFilters", () => {
     await user.click(await screen.findByRole("option", { name: "Crítica" }))
 
     expect(onSeverityChange).toHaveBeenCalledWith("CRITICAL")
+  })
+
+  it("translates the calendar's own previous/next month and dropdown aria-labels", async () => {
+    const user = userEvent.setup()
+    setup()
+
+    await user.click(screen.getByLabelText("Desde"))
+
+    expect(await screen.findByRole("button", { name: "Ir al mes anterior" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Ir al mes siguiente" })).toBeInTheDocument()
+    expect(screen.getByRole("combobox", { name: "Elegir el mes" })).toBeInTheDocument()
+    expect(screen.getByRole("combobox", { name: "Elegir el año" })).toBeInTheDocument()
+  })
+
+  it("renders translated copy and labels in English", async () => {
+    const user = userEvent.setup()
+    setup({}, false, "en")
+
+    expect(screen.getByLabelText("Search")).toHaveAttribute("placeholder", "Name or description")
+    expect(screen.getByLabelText("Date field")).toBeInTheDocument()
+    expect(screen.getByLabelText("From")).toHaveTextContent("Select date")
+    expect(screen.getByLabelText("To")).toHaveTextContent("Select date")
+    expect(screen.getByLabelText("Severity")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Clear filters" })).toBeInTheDocument()
+
+    await user.click(screen.getByLabelText("From"))
+
+    expect(await screen.findByRole("button", { name: "Go to the previous month" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Go to the next month" })).toBeInTheDocument()
+    expect(screen.getByRole("combobox", { name: "Choose the month" })).toBeInTheDocument()
+    expect(screen.getByRole("combobox", { name: "Choose the year" })).toBeInTheDocument()
   })
 })

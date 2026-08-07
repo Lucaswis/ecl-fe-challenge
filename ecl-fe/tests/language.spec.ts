@@ -26,7 +26,7 @@ test.describe("language toggle", () => {
     await page.getByRole("button", { name: "Cambiar a EN" }).click()
     await expect(page.locator("html")).toHaveAttribute("lang", "en")
 
-    await expect(page.getByLabel("Buscar")).toHaveValue("server")
+    await expect(page.getByLabel("Search")).toHaveValue("server")
     await expect(page.getByTestId("asset-table-row")).toHaveCount(3)
   })
 })
