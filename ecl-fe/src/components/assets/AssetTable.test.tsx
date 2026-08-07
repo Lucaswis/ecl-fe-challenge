@@ -117,4 +117,40 @@ describe("AssetTable", () => {
 
     expect(rowAfter).toBe(rowBefore)
   })
+
+  it("renders the Action column header", () => {
+    renderWithLocale(<AssetTable assets={ASSETS} />)
+
+    expect(screen.getByRole("columnheader", { name: "Acciones" })).toBeInTheDocument()
+  })
+
+  it("removes a row from the table once its delete is confirmed", async () => {
+    const user = userEvent.setup()
+    renderWithLocale(<AssetTable assets={ASSETS} />)
+
+    await user.click(screen.getByRole("button", { name: "Eliminar Production Server" }))
+    await user.click(screen.getByRole("button", { name: "Eliminar" }))
+
+    expect(screen.queryByText("Production Server")).not.toBeInTheDocument()
+    expect(screen.getByText("Frontend Cluster")).toBeInTheDocument()
+  })
+
+  it("resets the view to page 1 once a delete leaves only one page of results", async () => {
+    const user = userEvent.setup()
+    const manyAssets: AssetWithSeverity[] = Array.from({ length: 11 }, (_, i) => ({
+      ...ASSETS[0],
+      id: `asset-many-${i}`,
+      name: `Asset ${i}`,
+    }))
+    renderWithLocale(<AssetTable assets={manyAssets} />)
+
+    await user.click(screen.getByRole("button", { name: "Siguiente" }))
+    expect(screen.getByText("Asset 10")).toBeInTheDocument()
+
+    await user.click(screen.getByRole("button", { name: "Eliminar Asset 10" }))
+    await user.click(screen.getByRole("button", { name: "Eliminar" }))
+
+    expect(screen.queryByRole("navigation")).not.toBeInTheDocument()
+    expect(screen.getByText("Asset 0")).toBeInTheDocument()
+  })
 })

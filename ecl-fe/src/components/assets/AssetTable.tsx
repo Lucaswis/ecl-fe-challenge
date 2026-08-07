@@ -19,7 +19,7 @@ interface AssetTableProps {
 
 export function AssetTable({ assets }: AssetTableProps) {
   const { t } = useTranslation()
-  const { created, deletedIds } = useAssetStore()
+  const { created, deletedIds, deleteAsset } = useAssetStore()
   const merged = useMemo(
     () => mergeAssets(assets, created, deletedIds),
     [assets, created, deletedIds]
@@ -40,7 +40,13 @@ export function AssetTable({ assets }: AssetTableProps) {
     totalPages,
     nextPage,
     prevPage,
+    goToPage,
   } = useAssetTable(merged)
+
+  const handleDelete = (id: string) => {
+    deleteAsset(id)
+    goToPage(1)
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -64,15 +70,16 @@ export function AssetTable({ assets }: AssetTableProps) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-56">{t("table.columns.name")}</TableHead>
-              <TableHead className="w-72">{t("table.columns.description")}</TableHead>
+              <TableHead className="w-64">{t("table.columns.description")}</TableHead>
               <TableHead className="w-28">{t("filters.dateField.createdAt")}</TableHead>
               <TableHead className="w-36">{t("filters.dateField.lastScan")}</TableHead>
               <TableHead className="w-52">{t("table.columns.severity")}</TableHead>
+              <TableHead className="w-20">{t("table.columns.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {visibleAssets.map((asset, index) => (
-              <AssetTableRow key={asset.id} asset={asset} index={index} />
+              <AssetTableRow key={asset.id} asset={asset} index={index} onDelete={handleDelete} />
             ))}
           </TableBody>
         </Table>
