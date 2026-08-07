@@ -9,6 +9,11 @@ import { localeCookieString } from "@/lib/i18n/locale-cookie"
 import { useTranslation } from "@/hooks/use-translation"
 import type { Locale } from "@/lib/i18n/types"
 
+const FLAGS: Record<Locale, string> = {
+  es: "🇪🇸",
+  en: "🇺🇸",
+}
+
 export function LanguageToggle() {
   const router = useRouter()
   const { t, locale } = useTranslation()
@@ -25,6 +30,7 @@ export function LanguageToggle() {
       }}
     >
       <HugeiconsIcon icon={LanguageSkillIcon} strokeWidth={2} />
+      <span aria-hidden="true">{FLAGS[locale]}</span>
       {locale.toUpperCase()}
     </Button>
   )

@@ -30,6 +30,20 @@ describe("LanguageToggle", () => {
     expect(screen.getByRole("button")).toHaveTextContent("ES")
   })
 
+  it("shows the flag for the current locale", () => {
+    renderToggle("es")
+
+    expect(screen.getByRole("button")).toHaveTextContent("🇪🇸")
+  })
+
+  it("swaps the flag when the locale changes", () => {
+    renderToggle("en")
+
+    const button = screen.getByRole("button")
+    expect(button).toHaveTextContent("🇺🇸")
+    expect(button).not.toHaveTextContent("🇪🇸")
+  })
+
   it("writes the cookie for the other locale and refreshes, cookie first", async () => {
     const user = userEvent.setup()
     renderToggle("es")
