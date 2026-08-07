@@ -49,7 +49,7 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("narrows results with the text filter", async ({ page }) => {
     await page.goto("/")
 
-    await page.getByLabel("Buscar").fill("server")
+    await page.getByLabel("Buscar").pressSequentially("server")
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(3)
     await expect(page.getByText("Production Server")).toBeVisible()
@@ -71,7 +71,7 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   }) => {
     await page.goto("/")
 
-    await page.getByLabel("Buscar").fill("this-does-not-exist")
+    await page.getByLabel("Buscar").pressSequentially("this-does-not-exist")
 
     await expect(page.getByText("Ningún asset coincide con los filtros")).toBeVisible()
 
@@ -107,7 +107,7 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   }) => {
     await page.goto("/")
 
-    await page.getByLabel("Buscar").fill("Scanner Node")
+    await page.getByLabel("Buscar").pressSequentially("Scanner Node")
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(1)
     await expect(page.getByText("N/D")).toBeVisible()

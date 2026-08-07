@@ -99,9 +99,7 @@ export function AssetFilters({
       data-testid="asset-filters"
     >
       <Field.Root className="flex flex-col gap-1">
-        <label htmlFor="asset-query" className="text-xs font-medium text-muted-foreground">
-          Buscar
-        </label>
+        <Field.Label className="text-xs font-medium text-muted-foreground">Buscar</Field.Label>
         <Input
           id="asset-query"
           placeholder="Nombre o descripción"
