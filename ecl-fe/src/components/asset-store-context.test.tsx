@@ -35,4 +35,14 @@ describe("useAssetStore", () => {
 
     expect(result.current.created.map((asset) => asset.id)).toEqual(["local-2", "local-1"])
   })
+
+  it("deleteAsset adds the id to deletedIds regardless of origin", () => {
+    const { result } = renderHook(() => useAssetStore(), { wrapper: AssetStoreProvider })
+
+    act(() => {
+      result.current.deleteAsset("asset-1")
+    })
+
+    expect(result.current.deletedIds.has("asset-1")).toBe(true)
+  })
 })
