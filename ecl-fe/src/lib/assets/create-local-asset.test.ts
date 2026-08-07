@@ -1,4 +1,5 @@
 import { createLocalAsset } from "./create-local-asset"
+import { toAssetWithSeverity } from "./local-store"
 import type { CreateAssetFormState } from "./types"
 
 const FORM: CreateAssetFormState = {
@@ -25,5 +26,22 @@ describe("createLocalAsset", () => {
     expect(asset.components).toHaveLength(2)
     expect(asset.components[0]).toMatchObject({ id: "local-id-2", assetId: "local-id-1", name: "nginx" })
     expect(asset.components[1]).toMatchObject({ id: "local-id-3", assetId: "local-id-1", name: "postgres" })
+  })
+
+  it("feeds the existing severity ranking with no duplicated logic, for a mix of vulnerabilities", () => {
+    const form: CreateAssetFormState = {
+      ...FORM,
+      components: [],
+      vulnerabilities: [
+        { key: "v1", description: "SQL injection", severity: "CRITICAL" },
+        { key: "v2", description: "Outdated dependency", severity: "LOW" },
+      ],
+    }
+
+    const asset = createLocalAsset(form)
+    const withSeverity = toAssetWithSeverity(asset)
+
+    expect(withSeverity.highestSeverity).toBe("CRITICAL")
+    expect(withSeverity.vulnerabilityCount).toBe(2)
   })
 })
