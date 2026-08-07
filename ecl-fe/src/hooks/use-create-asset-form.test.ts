@@ -81,3 +81,32 @@ describe("createAssetFormReducer — vulnerabilities", () => {
     expect(state.vulnerabilities[1]).toEqual(second)
   })
 })
+
+describe("createAssetFormReducer — base fields and reset", () => {
+  it("setField updates name and description independently", () => {
+    const withName = createAssetFormReducer(initialCreateAssetFormState, {
+      type: "setField",
+      field: "name",
+      value: "Production Server",
+    })
+    const state = createAssetFormReducer(withName, {
+      type: "setField",
+      field: "description",
+      value: "Main backend server",
+    })
+
+    expect(state.name).toBe("Production Server")
+    expect(state.description).toBe("Main backend server")
+  })
+
+  it("reset returns to the initial state, discarding rows and field values", () => {
+    const dirty = createAssetFormReducer(
+      createAssetFormReducer(initialCreateAssetFormState, { type: "setField", field: "name", value: "x" }),
+      { type: "addComponent" }
+    )
+
+    const state = createAssetFormReducer(dirty, { type: "reset" })
+
+    expect(state).toEqual(initialCreateAssetFormState)
+  })
+})
