@@ -38,18 +38,18 @@ describe("ThemeToggle", () => {
     expect(screen.getByRole("button", { name: "Toggle theme" })).toBeInTheDocument()
   })
 
-  it("shows the sun icon visible in light mode, hidden in dark mode", () => {
+  it("shows the sun icon hidden in light mode, visible in dark mode", () => {
     const { container } = renderToggle()
 
     const sun = container.querySelector("svg:first-of-type")
-    expect(sun).toHaveClass("dark:hidden")
-    expect(sun).not.toHaveClass("hidden")
+    expect(sun).toHaveClass("hidden", "dark:block")
   })
 
-  it("shows the moon icon hidden in light mode, visible in dark mode", () => {
+  it("shows the moon icon visible in light mode, hidden in dark mode", () => {
     const { container } = renderToggle()
 
     const moon = container.querySelector("svg:last-of-type")
-    expect(moon).toHaveClass("hidden", "dark:block")
+    expect(moon).toHaveClass("dark:hidden")
+    expect(moon).not.toHaveClass("hidden")
   })
 })

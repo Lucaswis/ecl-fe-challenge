@@ -18,8 +18,8 @@ export function ThemeToggle() {
       aria-label={t("header.theme.toggle")}
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      <HugeiconsIcon icon={Sun02Icon} strokeWidth={2} className="dark:hidden" />
-      <HugeiconsIcon icon={Moon02Icon} strokeWidth={2} className="hidden dark:block" />
+      <HugeiconsIcon icon={Sun02Icon} strokeWidth={2} className="hidden dark:block" />
+      <HugeiconsIcon icon={Moon02Icon} strokeWidth={2} className="dark:hidden" />
     </Button>
   )
 }
