@@ -1,12 +1,16 @@
 "use client"
 
+import { useMemo } from "react"
+
 import { AssetEmptyState } from "@/components/assets/AssetEmptyState"
 import { AssetFilters } from "@/components/assets/AssetFilters"
 import { AssetPagination } from "@/components/assets/AssetPagination"
 import { AssetTableRow } from "@/components/assets/AssetTableRow"
+import { useAssetStore } from "@/components/asset-store-context"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useAssetTable } from "@/hooks/use-asset-table"
 import { useTranslation } from "@/hooks/use-translation"
+import { mergeAssets } from "@/lib/assets/local-store"
 import type { AssetWithSeverity } from "@/lib/assets/types"
 
 interface AssetTableProps {
@@ -15,6 +19,11 @@ interface AssetTableProps {
 
 export function AssetTable({ assets }: AssetTableProps) {
   const { t } = useTranslation()
+  const { created, deletedIds } = useAssetStore()
+  const merged = useMemo(
+    () => mergeAssets(assets, created, deletedIds),
+    [assets, created, deletedIds]
+  )
   const {
     criteria,
     setQuery,
@@ -31,7 +40,7 @@ export function AssetTable({ assets }: AssetTableProps) {
     totalPages,
     nextPage,
     prevPage,
-  } = useAssetTable(assets)
+  } = useAssetTable(merged)
 
   return (
     <div className="flex flex-col gap-4">
