@@ -45,4 +45,20 @@ describe("useAssetStore", () => {
 
     expect(result.current.deletedIds.has("asset-1")).toBe(true)
   })
+
+  it("getLocalAsset returns undefined once the id is deleted, even if still in created", () => {
+    const { result } = renderHook(() => useAssetStore(), { wrapper: AssetStoreProvider })
+
+    act(() => {
+      result.current.addAsset(localAsset("local-1"))
+    })
+
+    expect(result.current.getLocalAsset("local-1")?.id).toBe("local-1")
+
+    act(() => {
+      result.current.deleteAsset("local-1")
+    })
+
+    expect(result.current.getLocalAsset("local-1")).toBeUndefined()
+  })
 })
