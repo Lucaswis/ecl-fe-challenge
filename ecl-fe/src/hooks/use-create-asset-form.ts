@@ -1,6 +1,6 @@
 import { useReducer } from "react"
 
-import type { ComponentDraft, CreateAssetFormState } from "@/lib/assets/types"
+import type { ComponentDraft, CreateAssetFormState, VulnerabilityDraft } from "@/lib/assets/types"
 
 export type ComponentDraftField = "name" | "version" | "vendor" | "type"
 export type VulnerabilityDraftField = "description" | "severity"
@@ -26,6 +26,10 @@ function emptyComponentDraft(key: string): ComponentDraft {
   return { key, name: "", version: "", vendor: "", type: "" }
 }
 
+function emptyVulnerabilityDraft(key: string): VulnerabilityDraft {
+  return { key, description: "", severity: "LOW" }
+}
+
 export function createAssetFormReducer(
   state: CreateAssetFormState,
   action: CreateAssetFormAction
@@ -40,6 +44,25 @@ export function createAssetFormReducer(
         ...state,
         components: state.components.map((component) =>
           component.key === action.key ? { ...component, [action.field]: action.value } : component
+        ),
+      }
+    case "addVulnerability":
+      return {
+        ...state,
+        vulnerabilities: [...state.vulnerabilities, emptyVulnerabilityDraft(crypto.randomUUID())],
+      }
+    case "removeVulnerability":
+      return {
+        ...state,
+        vulnerabilities: state.vulnerabilities.filter((vulnerability) => vulnerability.key !== action.key),
+      }
+    case "setVulnerabilityField":
+      return {
+        ...state,
+        vulnerabilities: state.vulnerabilities.map((vulnerability) =>
+          vulnerability.key === action.key
+            ? { ...vulnerability, [action.field]: action.value }
+            : vulnerability
         ),
       }
     default:
