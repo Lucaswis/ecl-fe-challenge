@@ -151,6 +151,34 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
     await expect(page.getByTestId("asset-table-row")).toHaveCount(10)
   })
 
+  test("creates an asset with a component and a vulnerability, visible with the right severity and still filterable", async ({
+    page,
+  }) => {
+    await page.goto("/")
+
+    await page.getByRole("button", { name: "Agregar asset" }).click()
+    await page.getByLabel("Nombre").fill("New Test Asset")
+    await page.getByLabel("Descripción").fill("Created via e2e test")
+
+    await page.getByRole("button", { name: "Agregar componente" }).click()
+    const componentRow = page.getByTestId("component-draft-row")
+    await componentRow.getByLabel("Nombre").fill("nginx")
+
+    await page.getByRole("button", { name: "Agregar vulnerabilidad" }).click()
+    const vulnerabilityRow = page.getByTestId("vulnerability-draft-row")
+    await vulnerabilityRow.getByLabel("Descripción").fill("Outdated TLS cipher")
+    await vulnerabilityRow.getByLabel("Severidad").click()
+    await page.getByRole("option", { name: "Crítica" }).click()
+
+    await page.getByRole("button", { name: "Crear" }).click()
+
+    await expect(page.getByText("New Test Asset")).toBeVisible()
+    await expect(page.getByText("CRITICAL · 1 vulnerabilidad")).toBeVisible()
+
+    await page.getByLabel("Buscar").pressSequentially("this-does-not-exist")
+    await expect(page.getByText("New Test Asset")).not.toBeVisible()
+  })
+
   test("opening Hasta while Desde's calendar is still open never leaves two grids mounted", async ({
     page,
   }) => {

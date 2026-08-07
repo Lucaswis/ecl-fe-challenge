@@ -153,4 +153,41 @@ describe("AssetTable", () => {
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument()
     expect(screen.getByText("Asset 0")).toBeInTheDocument()
   })
+
+  it("prepends a newly created asset to row 1 and resets the view to page 1", async () => {
+    const user = userEvent.setup()
+    const manyAssets: AssetWithSeverity[] = Array.from({ length: 11 }, (_, i) => ({
+      ...ASSETS[0],
+      id: `asset-many-${i}`,
+      name: `Asset ${i}`,
+    }))
+    renderWithLocale(<AssetTable assets={manyAssets} />)
+
+    await user.click(screen.getByRole("button", { name: "Siguiente" }))
+    expect(screen.getByText("Asset 10")).toBeInTheDocument()
+
+    await user.click(screen.getByRole("button", { name: "Agregar asset" }))
+    await user.type(screen.getByLabelText("Nombre"), "New Asset")
+    await user.type(screen.getByLabelText("Descripción"), "Created via dialog")
+    await user.click(screen.getByRole("button", { name: "Crear" }))
+
+    expect(screen.getByText("New Asset")).toBeInTheDocument()
+    expect(screen.getByText("Asset 0")).toBeInTheDocument()
+    expect(screen.queryByText("Asset 10")).not.toBeInTheDocument()
+  })
+
+  it("hides a newly created asset that doesn't match the active filter", async () => {
+    const user = userEvent.setup()
+    renderWithLocale(<AssetTable assets={ASSETS} />)
+
+    await user.type(screen.getByLabelText("Buscar"), "frontend")
+
+    await user.click(screen.getByRole("button", { name: "Agregar asset" }))
+    await user.type(screen.getByLabelText("Nombre"), "New Asset")
+    await user.type(screen.getByLabelText("Descripción"), "desc")
+    await user.click(screen.getByRole("button", { name: "Crear" }))
+
+    expect(screen.queryByText("New Asset")).not.toBeInTheDocument()
+    expect(screen.getByText("Frontend Cluster")).toBeInTheDocument()
+  })
 })

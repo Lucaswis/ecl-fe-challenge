@@ -6,6 +6,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Calendar03Icon } from "@hugeicons/core-free-icons"
 import { enUS, es } from "date-fns/locale"
 import { useRef, useState } from "react"
+import type { ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -32,6 +33,7 @@ interface AssetFiltersProps {
   onSeverityChange: (severity: SeverityFilterValue) => void
   onReset: () => void
   isFiltered: boolean
+  actions?: ReactNode
 }
 
 const DATE_FIELD_ITEMS: { value: DateField; labelKey: TranslationKey }[] = [
@@ -121,6 +123,7 @@ export function AssetFilters({
   onSeverityChange,
   onReset,
   isFiltered,
+  actions,
 }: AssetFiltersProps) {
   const { t } = useTranslation()
   const dateFromActionsRef = useRef<PopoverPrimitive.Root.Actions>(null)
@@ -209,6 +212,8 @@ export function AssetFilters({
       <Button variant="outline" size="sm" onClick={onReset} disabled={!isFiltered}>
         {t("filters.reset")}
       </Button>
+
+      {actions ? <div className="ml-auto">{actions}</div> : null}
     </div>
   )
 }
