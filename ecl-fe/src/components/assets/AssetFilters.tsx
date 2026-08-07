@@ -4,6 +4,7 @@ import { Field } from "@base-ui/react/field"
 import type { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Calendar03Icon } from "@hugeicons/core-free-icons"
+import { enUS, es } from "date-fns/locale"
 import { useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -17,8 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTranslation } from "@/hooks/use-translation"
 import { dateToIso, formatDisplayDate, isoToDate } from "@/lib/assets/date"
 import type { AssetFilterCriteria, DateField, SeverityFilterValue } from "@/lib/assets/types"
+import type { TranslationKey } from "@/lib/i18n/types"
 
 interface AssetFiltersProps {
   criteria: AssetFilterCriteria
@@ -31,17 +34,17 @@ interface AssetFiltersProps {
   isFiltered: boolean
 }
 
-const DATE_FIELD_ITEMS: { value: DateField; label: string }[] = [
-  { value: "createdAt", label: "Creado" },
-  { value: "lastScan", label: "Último escaneo" },
+const DATE_FIELD_ITEMS: { value: DateField; labelKey: TranslationKey }[] = [
+  { value: "createdAt", labelKey: "filters.dateField.createdAt" },
+  { value: "lastScan", labelKey: "filters.dateField.lastScan" },
 ]
 
-const SEVERITY_ITEMS: { value: SeverityFilterValue; label: string }[] = [
-  { value: "ALL", label: "Todas" },
-  { value: "CRITICAL", label: "Crítica" },
-  { value: "HIGH", label: "Alta" },
-  { value: "MEDIUM", label: "Media" },
-  { value: "LOW", label: "Baja" },
+const SEVERITY_ITEMS: { value: SeverityFilterValue; labelKey: TranslationKey }[] = [
+  { value: "ALL", labelKey: "filters.severity.all" },
+  { value: "CRITICAL", labelKey: "filters.severity.critical" },
+  { value: "HIGH", labelKey: "filters.severity.high" },
+  { value: "MEDIUM", labelKey: "filters.severity.medium" },
+  { value: "LOW", labelKey: "filters.severity.low" },
 ]
 
 interface DateFilterFieldProps {
@@ -61,8 +64,10 @@ function DateFilterField({
   actionsRef,
   onOpen,
 }: DateFilterFieldProps) {
+  const { t, locale } = useTranslation()
   const [open, setOpen] = useState(false)
   const selected = isoToDate(value)
+  const dateFnsLocale = locale === "en" ? enUS : es
 
   return (
     <div className="flex flex-col gap-1">
@@ -81,12 +86,19 @@ function DateFilterField({
           render={<Button id={id} variant="outline" size="sm" className="justify-start gap-1.5" />}
         >
           <HugeiconsIcon icon={Calendar03Icon} strokeWidth={2} className="size-3.5" />
-          {formatDisplayDate(value) ?? "Seleccionar fecha"}
+          {formatDisplayDate(value, locale) ?? t("filters.datePlaceholder")}
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
           <Calendar
             mode="single"
             captionLayout="dropdown"
+            locale={dateFnsLocale}
+            labels={{
+              labelPrevious: () => t("filters.calendar.previousMonth"),
+              labelNext: () => t("filters.calendar.nextMonth"),
+              labelMonthDropdown: () => t("filters.calendar.chooseMonth"),
+              labelYearDropdown: () => t("filters.calendar.chooseYear"),
+            }}
             selected={selected}
             defaultMonth={selected ?? new Date()}
             onSelect={(date) => {
@@ -110,6 +122,7 @@ export function AssetFilters({
   onReset,
   isFiltered,
 }: AssetFiltersProps) {
+  const { t } = useTranslation()
   const dateFromActionsRef = useRef<PopoverPrimitive.Root.Actions>(null)
   const dateToActionsRef = useRef<PopoverPrimitive.Root.Actions>(null)
 
@@ -119,10 +132,12 @@ export function AssetFilters({
       data-testid="asset-filters"
     >
       <Field.Root className="flex flex-col gap-1">
-        <Field.Label className="text-xs font-medium text-muted-foreground">Buscar</Field.Label>
+        <Field.Label className="text-xs font-medium text-muted-foreground">
+          {t("filters.search")}
+        </Field.Label>
         <Input
           id="asset-query"
-          placeholder="Nombre o descripción"
+          placeholder={t("filters.searchPlaceholder")}
           value={criteria.query}
           onChange={(event) => onQueryChange(event.target.value)}
           className="w-48"
@@ -131,10 +146,10 @@ export function AssetFilters({
 
       <div className="flex flex-col gap-1">
         <label htmlFor="asset-date-field" className="text-xs font-medium text-muted-foreground">
-          Fecha de
+          {t("filters.dateField.label")}
         </label>
         <Select
-          items={DATE_FIELD_ITEMS}
+          items={DATE_FIELD_ITEMS.map((item) => ({ value: item.value, label: t(item.labelKey) }))}
           value={criteria.dateField}
           onValueChange={(value) => onDateFieldChange(value as DateField)}
         >
@@ -144,7 +159,7 @@ export function AssetFilters({
           <SelectContent>
             {DATE_FIELD_ITEMS.map((item) => (
               <SelectItem key={item.value} value={item.value}>
-                {item.label}
+                {t(item.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -153,7 +168,7 @@ export function AssetFilters({
 
       <DateFilterField
         id="asset-date-from"
-        label="Desde"
+        label={t("filters.dateFrom.label")}
         value={criteria.dateFrom}
         onChange={onDateFromChange}
         actionsRef={dateFromActionsRef}
@@ -162,7 +177,7 @@ export function AssetFilters({
 
       <DateFilterField
         id="asset-date-to"
-        label="Hasta"
+        label={t("filters.dateTo.label")}
         value={criteria.dateTo}
         onChange={onDateToChange}
         actionsRef={dateToActionsRef}
@@ -171,10 +186,10 @@ export function AssetFilters({
 
       <div className="flex flex-col gap-1">
         <label htmlFor="asset-severity" className="text-xs font-medium text-muted-foreground">
-          Severidad
+          {t("filters.severity.label")}
         </label>
         <Select
-          items={SEVERITY_ITEMS}
+          items={SEVERITY_ITEMS.map((item) => ({ value: item.value, label: t(item.labelKey) }))}
           value={criteria.severity}
           onValueChange={(value) => onSeverityChange(value as SeverityFilterValue)}
         >
@@ -184,7 +199,7 @@ export function AssetFilters({
           <SelectContent>
             {SEVERITY_ITEMS.map((item) => (
               <SelectItem key={item.value} value={item.value}>
-                {item.label}
+                {t(item.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -192,7 +207,7 @@ export function AssetFilters({
       </div>
 
       <Button variant="outline" size="sm" onClick={onReset} disabled={!isFiltered}>
-        Limpiar filtros
+        {t("filters.reset")}
       </Button>
     </div>
   )

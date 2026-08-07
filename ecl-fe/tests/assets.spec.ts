@@ -17,15 +17,8 @@ async function selectDate(page: Page, label: string, year: number, month: number
 
   const grid = page.getByRole("grid")
 
-  for (let guard = 0; guard < 60; guard++) {
-    const caption = (await grid.getAttribute("aria-label")) ?? ""
-    const shown = new Date(`${caption} 1`)
-    const monthsToMove = (year - shown.getFullYear()) * 12 + (month - 1 - shown.getMonth())
-    if (monthsToMove === 0) break
-
-    const navLabel = monthsToMove > 0 ? "Go to the Next Month" : "Go to the Previous Month"
-    await page.getByRole("button", { name: navLabel }).click()
-  }
+  await page.getByRole("combobox", { name: "Elegir el mes" }).selectOption(String(month - 1))
+  await page.getByRole("combobox", { name: "Elegir el año" }).selectOption(String(year))
 
   await grid
     .locator("td:not([data-outside]) button")
@@ -138,15 +131,14 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
     await page.goto("/")
 
     await page.getByLabel("Desde").click()
-    await page.getByRole("button", { name: "Go to the Previous Month" }).click()
+    await page.getByRole("button", { name: "Ir al mes anterior" }).click()
 
     // Jump straight to Hasta without picking a day in Desde first.
     await page.getByLabel("Hasta").click()
 
-    const currentMonthCaption = new Date().toLocaleString("en-US", {
-      month: "long",
-      year: "numeric",
-    })
+    const currentMonthCaption = new Date()
+      .toLocaleString("es", { month: "long", year: "numeric" })
+      .replace(" de ", " ")
 
     await expect(page.getByRole("grid")).toHaveCount(1)
     await expect(page.getByRole("grid")).toHaveAttribute("aria-label", currentMonthCaption)

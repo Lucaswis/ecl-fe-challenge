@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "@/hooks/use-translation"
 
 interface AssetPaginationProps {
   page: number
@@ -10,20 +11,20 @@ interface AssetPaginationProps {
 }
 
 export function AssetPagination({ page, totalPages, onPrev, onNext }: AssetPaginationProps) {
+  const { t } = useTranslation()
+
   return (
     <nav
-      aria-label="Paginación"
+      aria-label={t("pagination.label")}
       className="flex items-center justify-between gap-2 text-xs text-muted-foreground"
     >
-      <span>
-        Página {page} de {totalPages}
-      </span>
+      <span>{t("pagination.pageOfTotal", { page: String(page), totalPages: String(totalPages) })}</span>
       <div className="flex gap-2">
         <Button variant="outline" size="sm" onClick={onPrev} disabled={page <= 1}>
-          Anterior
+          {t("pagination.previous")}
         </Button>
         <Button variant="outline" size="sm" onClick={onNext} disabled={page >= totalPages}>
-          Siguiente
+          {t("pagination.next")}
         </Button>
       </div>
     </nav>

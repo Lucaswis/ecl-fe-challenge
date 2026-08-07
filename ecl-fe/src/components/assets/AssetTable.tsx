@@ -6,6 +6,7 @@ import { AssetPagination } from "@/components/assets/AssetPagination"
 import { AssetTableRow } from "@/components/assets/AssetTableRow"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useAssetTable } from "@/hooks/use-asset-table"
+import { useTranslation } from "@/hooks/use-translation"
 import type { AssetWithSeverity } from "@/lib/assets/types"
 
 interface AssetTableProps {
@@ -13,6 +14,7 @@ interface AssetTableProps {
 }
 
 export function AssetTable({ assets }: AssetTableProps) {
+  const { t } = useTranslation()
   const {
     criteria,
     setQuery,
@@ -52,11 +54,11 @@ export function AssetTable({ assets }: AssetTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Descripción</TableHead>
-              <TableHead>Creado</TableHead>
-              <TableHead>Último escaneo</TableHead>
-              <TableHead>Severidad</TableHead>
+              <TableHead>{t("table.columns.name")}</TableHead>
+              <TableHead>{t("table.columns.description")}</TableHead>
+              <TableHead>{t("filters.dateField.createdAt")}</TableHead>
+              <TableHead>{t("filters.dateField.lastScan")}</TableHead>
+              <TableHead>{t("table.columns.severity")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

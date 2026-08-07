@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
 import { Table, TableBody } from "@/components/ui/table"
+import { renderWithLocale } from "@/test-utils/render-with-locale"
 import { AssetTableRow } from "./AssetTableRow"
 import type { AssetWithSeverity } from "@/lib/assets/types"
 
@@ -15,7 +16,7 @@ const ASSET: AssetWithSeverity = {
 
 describe("AssetTableRow", () => {
   it("renders the asset name as a link to its detail page", () => {
-    render(
+    renderWithLocale(
       <Table>
         <TableBody>
           <AssetTableRow asset={ASSET} index={0} />
@@ -28,7 +29,7 @@ describe("AssetTableRow", () => {
   })
 
   it("leaves the other cells unchanged", () => {
-    render(
+    renderWithLocale(
       <Table>
         <TableBody>
           <AssetTableRow asset={ASSET} index={0} />

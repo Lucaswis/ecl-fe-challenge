@@ -1,17 +1,5 @@
-const MONTHS_ES = [
-  "enero",
-  "febrero",
-  "marzo",
-  "abril",
-  "mayo",
-  "junio",
-  "julio",
-  "agosto",
-  "septiembre",
-  "octubre",
-  "noviembre",
-  "diciembre",
-]
+import type { Locale } from "@/lib/i18n/types"
+import { DEFAULT_LOCALE } from "@/lib/i18n/types"
 
 export function isoToDate(iso: string | null): Date | undefined {
   if (!iso) return undefined
@@ -27,9 +15,9 @@ export function dateToIso(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
-export function formatDisplayDate(iso: string | null): string | null {
+export function formatDisplayDate(iso: string | null, locale: Locale = DEFAULT_LOCALE): string | null {
   const date = isoToDate(iso)
   if (!date) return null
 
-  return `${date.getDate()} de ${MONTHS_ES[date.getMonth()]} de ${date.getFullYear()}`
+  return new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(date)
 }
