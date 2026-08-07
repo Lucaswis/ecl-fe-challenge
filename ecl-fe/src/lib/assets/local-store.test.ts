@@ -1,5 +1,5 @@
 import { mergeAssets } from "./local-store"
-import type { AssetWithSeverity } from "./types"
+import type { AssetWithSeverity, LocalAsset } from "./types"
 
 const BASE: AssetWithSeverity[] = [
   {
@@ -22,8 +22,26 @@ const BASE: AssetWithSeverity[] = [
   },
 ]
 
+const CREATED: LocalAsset[] = [
+  {
+    id: "local-1",
+    name: "Local Asset",
+    description: "Created in this session",
+    createdAt: "2025-03-01T00:00:00Z",
+    lastScan: "2025-03-01T00:00:00Z",
+    components: [],
+    vulnerabilities: [],
+  },
+]
+
 describe("mergeAssets", () => {
   it("returns base unchanged when there are no created or deleted assets", () => {
     expect(mergeAssets(BASE, [], new Set())).toEqual(BASE)
+  })
+
+  it("prepends created assets and filters out deleted ids from both created and base", () => {
+    const result = mergeAssets(BASE, CREATED, new Set(["asset-1"]))
+
+    expect(result.map((asset) => asset.id)).toEqual(["local-1", "asset-2"])
   })
 })
