@@ -1,4 +1,4 @@
-import { mergeAssets } from "./local-store"
+import { mergeAssets, toAssetWithSeverity } from "./local-store"
 import type { AssetWithSeverity, LocalAsset } from "./types"
 
 const BASE: AssetWithSeverity[] = [
@@ -43,5 +43,14 @@ describe("mergeAssets", () => {
     const result = mergeAssets(BASE, CREATED, new Set(["asset-1"]))
 
     expect(result.map((asset) => asset.id)).toEqual(["local-1", "asset-2"])
+  })
+})
+
+describe("toAssetWithSeverity", () => {
+  it("returns NONE severity and a zero count for an asset with no vulnerabilities", () => {
+    const result = toAssetWithSeverity(CREATED[0])
+
+    expect(result.highestSeverity).toBe("NONE")
+    expect(result.vulnerabilityCount).toBe(0)
   })
 })
