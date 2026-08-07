@@ -26,7 +26,7 @@ describe("AssetTableRow", () => {
 
     const link = screen.getByRole("link", { name: "Production Server" })
     expect(link).toHaveAttribute("href", "/assets/asset-1")
-    expect(link).toHaveClass("text-primary", "hover:underline")
+    expect(link).toHaveClass("text-primary", "underline")
   })
 
   it("leaves the other cells unchanged", () => {
