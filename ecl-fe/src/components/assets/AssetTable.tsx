@@ -51,14 +51,14 @@ export function AssetTable({ assets }: AssetTableProps) {
       ) : filteredCount === 0 ? (
         <AssetEmptyState variant="no-matches" onReset={resetFilters} />
       ) : (
-        <Table>
+        <Table className="table-fixed">
           <TableHeader>
             <TableRow>
-              <TableHead>{t("table.columns.name")}</TableHead>
-              <TableHead>{t("table.columns.description")}</TableHead>
-              <TableHead>{t("filters.dateField.createdAt")}</TableHead>
-              <TableHead>{t("filters.dateField.lastScan")}</TableHead>
-              <TableHead>{t("table.columns.severity")}</TableHead>
+              <TableHead className="w-56">{t("table.columns.name")}</TableHead>
+              <TableHead className="w-72">{t("table.columns.description")}</TableHead>
+              <TableHead className="w-28">{t("filters.dateField.createdAt")}</TableHead>
+              <TableHead className="w-36">{t("filters.dateField.lastScan")}</TableHead>
+              <TableHead className="w-52">{t("table.columns.severity")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
