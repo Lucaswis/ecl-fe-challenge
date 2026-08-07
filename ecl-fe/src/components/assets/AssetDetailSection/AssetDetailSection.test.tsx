@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetDetailSection } from "./AssetDetailSection"
+import { AssetDetailSection } from "."
 
 describe("AssetDetailSection", () => {
   it("renders a translated heading with the children below it", () => {

@@ -1,7 +1,7 @@
 import { screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { CreateAssetDialog } from "./CreateAssetDialog"
+import { CreateAssetDialog } from "."
 
 describe("CreateAssetDialog", () => {
   it("renders closed by default with a trigger button", () => {

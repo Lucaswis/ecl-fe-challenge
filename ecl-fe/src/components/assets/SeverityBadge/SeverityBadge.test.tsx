@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { SeverityBadge } from "./SeverityBadge"
+import { SeverityBadge } from "."
 
 describe("SeverityBadge", () => {
   it("renders a real severity with its vulnerability count, pluralized", () => {

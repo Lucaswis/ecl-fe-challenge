@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
 import { LocaleProvider } from "@/lib/i18n/locale-context"
-import { LanguageToggle } from "./LanguageToggle"
+import { LanguageToggle } from "."
 
 const refresh = jest.fn()
 

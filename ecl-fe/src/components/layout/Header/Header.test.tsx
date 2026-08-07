@@ -3,7 +3,7 @@ import { ThemeProvider } from "next-themes"
 
 import { LocaleProvider } from "@/lib/i18n/locale-context"
 import type { Locale } from "@/lib/i18n/types"
-import { Header } from "./Header"
+import { Header } from "."
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: jest.fn() }),

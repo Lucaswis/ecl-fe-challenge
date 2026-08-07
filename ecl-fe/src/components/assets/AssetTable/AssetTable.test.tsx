@@ -1,12 +1,12 @@
 import { screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetTable } from "./AssetTable"
+import { AssetTable } from "."
 import { mergeAssets } from "@/lib/assets/local-store"
 import type { AssetWithSeverity } from "@/lib/assets/types"
 
-jest.mock("../../lib/assets/local-store", () => {
-  const actual = jest.requireActual("../../lib/assets/local-store")
+jest.mock("../../../lib/assets/local-store", () => {
+  const actual = jest.requireActual("../../../lib/assets/local-store")
   return { ...actual, mergeAssets: jest.fn(actual.mergeAssets) }
 })
 

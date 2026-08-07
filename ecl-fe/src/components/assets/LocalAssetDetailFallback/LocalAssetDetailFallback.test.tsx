@@ -2,11 +2,11 @@ import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
 import { useAssetStore } from "@/components/asset-store-context"
-import { LocalAssetDetailFallback } from "./LocalAssetDetailFallback"
+import { LocalAssetDetailFallback } from "."
 import type { LocalAsset } from "@/lib/assets/types"
 
-jest.mock("../asset-store-context", () => {
-  const actual = jest.requireActual("../asset-store-context")
+jest.mock("../../asset-store-context", () => {
+  const actual = jest.requireActual("../../asset-store-context")
   return { ...actual, useAssetStore: jest.fn() }
 })
 
