@@ -25,7 +25,12 @@ async function findCalendarDay(day: string) {
   return button
 }
 
-function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false, locale: Locale = "es") {
+function setup(
+  overrides: Partial<AssetFilterCriteria> = {},
+  isFiltered = false,
+  locale: Locale = "es",
+  actions?: React.ReactNode
+) {
   const onQueryChange = jest.fn()
   const onDateFieldChange = jest.fn()
   const onDateFromChange = jest.fn()
@@ -43,6 +48,7 @@ function setup(overrides: Partial<AssetFilterCriteria> = {}, isFiltered = false,
       onSeverityChange={onSeverityChange}
       onReset={onReset}
       isFiltered={isFiltered}
+      actions={actions}
     />,
     locale
   )
@@ -175,6 +181,12 @@ describe("AssetFilters", () => {
     expect(screen.getByRole("button", { name: "Ir al mes siguiente" })).toBeInTheDocument()
     expect(screen.getByRole("combobox", { name: "Elegir el mes" })).toBeInTheDocument()
     expect(screen.getByRole("combobox", { name: "Elegir el año" })).toBeInTheDocument()
+  })
+
+  it("renders the provided actions node", () => {
+    setup({}, false, "es", <button>Custom action</button>)
+
+    expect(screen.getByRole("button", { name: "Custom action" })).toBeInTheDocument()
   })
 
   it("renders translated copy and labels in English", async () => {
