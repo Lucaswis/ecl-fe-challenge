@@ -35,6 +35,10 @@ export function createAssetFormReducer(
   action: CreateAssetFormAction
 ): CreateAssetFormState {
   switch (action.type) {
+    case "setField":
+      return { ...state, [action.field]: action.value }
+    case "reset":
+      return initialCreateAssetFormState
     case "addComponent":
       return { ...state, components: [...state.components, emptyComponentDraft(crypto.randomUUID())] }
     case "removeComponent":
@@ -65,8 +69,6 @@ export function createAssetFormReducer(
             : vulnerability
         ),
       }
-    default:
-      return state
   }
 }
 
@@ -75,6 +77,15 @@ export function useCreateAssetForm() {
 
   return {
     state,
+    setField: (field: "name" | "description", value: string) => dispatch({ type: "setField", field, value }),
     addComponent: () => dispatch({ type: "addComponent" }),
+    removeComponent: (key: string) => dispatch({ type: "removeComponent", key }),
+    setComponentField: (key: string, field: ComponentDraftField, value: string) =>
+      dispatch({ type: "setComponentField", key, field, value }),
+    addVulnerability: () => dispatch({ type: "addVulnerability" }),
+    removeVulnerability: (key: string) => dispatch({ type: "removeVulnerability", key }),
+    setVulnerabilityField: (key: string, field: VulnerabilityDraftField, value: string) =>
+      dispatch({ type: "setVulnerabilityField", key, field, value }),
+    reset: () => dispatch({ type: "reset" }),
   }
 }
