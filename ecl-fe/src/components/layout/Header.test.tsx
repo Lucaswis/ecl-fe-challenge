@@ -25,7 +25,8 @@ describe("Header", () => {
 
     const banner = screen.getByRole("banner")
     expect(banner).toBeInTheDocument()
-    expect(screen.getByText("Assets")).toBeInTheDocument()
+    const homeLink = screen.getByRole("link", { name: "Assets" })
+    expect(homeLink).toHaveAttribute("href", "/")
     expect(screen.getByRole("button", { name: "Cambiar tema" })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Cambiar a EN" })).toBeInTheDocument()
   })
