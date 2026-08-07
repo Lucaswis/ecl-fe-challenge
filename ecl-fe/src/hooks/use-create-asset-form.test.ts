@@ -40,3 +40,44 @@ describe("createAssetFormReducer", () => {
     expect(state.components[1]).toEqual(second)
   })
 })
+
+describe("createAssetFormReducer — vulnerabilities", () => {
+  it("addVulnerability appends one draft with a fresh key", () => {
+    const state = createAssetFormReducer(initialCreateAssetFormState, { type: "addVulnerability" })
+
+    expect(state.vulnerabilities).toHaveLength(1)
+    expect(state.vulnerabilities[0].key).toBeTruthy()
+    expect(state.vulnerabilities[0]).toMatchObject({ description: "" })
+  })
+
+  it("removeVulnerability drops only the matching row, keeping the others' keys stable", () => {
+    const withTwoRows = createAssetFormReducer(
+      createAssetFormReducer(initialCreateAssetFormState, { type: "addVulnerability" }),
+      { type: "addVulnerability" }
+    )
+    const [first, second] = withTwoRows.vulnerabilities
+
+    const state = createAssetFormReducer(withTwoRows, { type: "removeVulnerability", key: first.key })
+
+    expect(state.vulnerabilities).toHaveLength(1)
+    expect(state.vulnerabilities[0].key).toBe(second.key)
+  })
+
+  it("setVulnerabilityField updates only the targeted row, leaving siblings untouched", () => {
+    const withTwoRows = createAssetFormReducer(
+      createAssetFormReducer(initialCreateAssetFormState, { type: "addVulnerability" }),
+      { type: "addVulnerability" }
+    )
+    const [first, second] = withTwoRows.vulnerabilities
+
+    const state = createAssetFormReducer(withTwoRows, {
+      type: "setVulnerabilityField",
+      key: first.key,
+      field: "severity",
+      value: "CRITICAL",
+    })
+
+    expect(state.vulnerabilities[0]).toMatchObject({ key: first.key, severity: "CRITICAL" })
+    expect(state.vulnerabilities[1]).toEqual(second)
+  })
+})
