@@ -1,4 +1,5 @@
 import { screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { Table, TableBody } from "@/components/ui/table"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
 import { AssetTableRow } from "./AssetTableRow"
@@ -19,7 +20,7 @@ describe("AssetTableRow", () => {
     renderWithLocale(
       <Table>
         <TableBody>
-          <AssetTableRow asset={ASSET} index={0} />
+          <AssetTableRow asset={ASSET} index={0} onDelete={jest.fn()} />
         </TableBody>
       </Table>
     )
@@ -33,7 +34,7 @@ describe("AssetTableRow", () => {
     renderWithLocale(
       <Table>
         <TableBody>
-          <AssetTableRow asset={ASSET} index={0} />
+          <AssetTableRow asset={ASSET} index={0} onDelete={jest.fn()} />
         </TableBody>
       </Table>
     )
@@ -42,5 +43,34 @@ describe("AssetTableRow", () => {
     expect(screen.getByText("2025-01-10")).toBeInTheDocument()
     expect(screen.getByText("2025-02-01")).toBeInTheDocument()
     expect(screen.getByText("HIGH · 2 vulnerabilidades")).toBeInTheDocument()
+  })
+
+  it("renders a delete trigger with an accessible name identifying the asset", () => {
+    renderWithLocale(
+      <Table>
+        <TableBody>
+          <AssetTableRow asset={ASSET} index={0} onDelete={jest.fn()} />
+        </TableBody>
+      </Table>
+    )
+
+    expect(screen.getByRole("button", { name: "Eliminar Production Server" })).toBeInTheDocument()
+  })
+
+  it("calls onDelete with the asset id once the delete is confirmed", async () => {
+    const user = userEvent.setup()
+    const onDelete = jest.fn()
+    renderWithLocale(
+      <Table>
+        <TableBody>
+          <AssetTableRow asset={ASSET} index={0} onDelete={onDelete} />
+        </TableBody>
+      </Table>
+    )
+
+    await user.click(screen.getByRole("button", { name: "Eliminar Production Server" }))
+    await user.click(screen.getByRole("button", { name: "Eliminar" }))
+
+    expect(onDelete).toHaveBeenCalledWith("asset-1")
   })
 })

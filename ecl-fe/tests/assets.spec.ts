@@ -125,6 +125,32 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
     await expect(page).toHaveURL(/\/assets\/asset-1$/)
   })
 
+  test("deletes a row after confirming, with no page reload and no next page", async ({ page }) => {
+    await page.goto("/")
+
+    await expect(page.getByTestId("asset-table-row")).toHaveCount(10)
+
+    await page.getByRole("button", { name: "Eliminar Production Server" }).click()
+    await expect(page.getByText("¿Eliminar asset?")).toBeVisible()
+
+    await page.getByRole("button", { name: "Eliminar", exact: true }).click()
+
+    await expect(page.getByRole("link", { name: "Production Server" })).not.toBeVisible()
+    await expect(page.getByTestId("asset-table-row")).toHaveCount(10)
+    await expect(page.getByText("Página 1 de 2")).toBeVisible()
+  })
+
+  test("canceling the delete confirmation leaves the row in place", async ({ page }) => {
+    await page.goto("/")
+
+    await page.getByRole("button", { name: "Eliminar Production Server" }).click()
+    await page.getByRole("button", { name: "Cancelar" }).click()
+
+    await expect(page.getByRole("dialog")).not.toBeVisible()
+    await expect(page.getByRole("link", { name: "Production Server" })).toBeVisible()
+    await expect(page.getByTestId("asset-table-row")).toHaveCount(10)
+  })
+
   test("opening Hasta while Desde's calendar is still open never leaves two grids mounted", async ({
     page,
   }) => {

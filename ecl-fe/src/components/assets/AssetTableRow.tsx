@@ -1,5 +1,6 @@
 import Link from "next/link"
 
+import { DeleteAssetDialog } from "@/components/assets/DeleteAssetDialog"
 import { SeverityBadge } from "@/components/assets/SeverityBadge"
 import { TableCell, TableRow } from "@/components/ui/table"
 import type { AssetWithSeverity } from "@/lib/assets/types"
@@ -7,13 +8,14 @@ import type { AssetWithSeverity } from "@/lib/assets/types"
 interface AssetTableRowProps {
   asset: AssetWithSeverity
   index: number
+  onDelete: (id: string) => void
 }
 
 function formatDay(iso: string): string {
   return iso.slice(0, 10)
 }
 
-export function AssetTableRow({ asset, index }: AssetTableRowProps) {
+export function AssetTableRow({ asset, index, onDelete }: AssetTableRowProps) {
   return (
     <TableRow
       data-testid="asset-table-row"
@@ -32,6 +34,9 @@ export function AssetTableRow({ asset, index }: AssetTableRowProps) {
       <TableCell>{formatDay(asset.lastScan)}</TableCell>
       <TableCell>
         <SeverityBadge severity={asset.highestSeverity} vulnerabilityCount={asset.vulnerabilityCount} />
+      </TableCell>
+      <TableCell>
+        <DeleteAssetDialog assetName={asset.name} onConfirm={() => onDelete(asset.id)} />
       </TableCell>
     </TableRow>
   )
