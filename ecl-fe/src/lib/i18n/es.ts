@@ -5,6 +5,8 @@ export const es: Dictionary = {
   "header.theme.toggle": "Cambiar tema",
   "header.language.switchTo": "Cambiar a {locale}",
   "assetDetail.backToListing": "Volver al listado",
+  "assetDetail.componentsHeading": "Componentes",
+  "assetDetail.vulnerabilitiesHeading": "Vulnerabilidades",
   "footer.createdBy": "Creado por",
   "assetsPage.heading": "Assets",
   "assetsPage.description": "Listado de assets registrados, con filtros por nombre, descripción y fecha.",

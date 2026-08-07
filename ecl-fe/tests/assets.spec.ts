@@ -179,6 +179,44 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
     await expect(page.getByText("New Test Asset")).not.toBeVisible()
   })
 
+  test("a created asset's detail page renders through the same layout as a real asset and is gone after a reload", async ({
+    page,
+  }) => {
+    await page.goto("/")
+
+    await page.getByRole("button", { name: "Agregar asset" }).click()
+    await page.getByLabel("Nombre").fill("Detail Fallback Asset")
+    await page.getByLabel("Descripción").fill("Rendered through the local store")
+
+    await page.getByRole("button", { name: "Agregar componente" }).click()
+    const componentRow = page.getByTestId("component-draft-row")
+    await componentRow.getByLabel("Nombre").fill("nginx")
+    await componentRow.getByLabel("Versión").fill("1.25.3")
+    await componentRow.getByLabel("Proveedor").fill("F5")
+
+    await page.getByRole("button", { name: "Agregar vulnerabilidad" }).click()
+    const vulnerabilityRow = page.getByTestId("vulnerability-draft-row")
+    await vulnerabilityRow.getByLabel("Descripción").fill("Weak cipher suite")
+    await vulnerabilityRow.getByLabel("Severidad").click()
+    await page.getByRole("option", { name: "Alta" }).click()
+
+    await page.getByRole("button", { name: "Crear" }).click()
+
+    await page.getByRole("link", { name: "Detail Fallback Asset" }).click()
+
+    await expect(page).toHaveURL(/\/assets\/local-/)
+    await expect(page.getByRole("heading", { name: "Detail Fallback Asset" })).toBeVisible()
+    await expect(page.getByText("Rendered through the local store")).toBeVisible()
+    await expect(page.getByRole("button", { name: "nginx" })).toBeVisible()
+    await expect(page.getByText("1.25.3")).toBeVisible()
+    await expect(page.getByText("Weak cipher suite")).toBeVisible()
+    await expect(page.getByText("HIGH", { exact: true })).toBeVisible()
+
+    await page.reload()
+
+    await expect(page.getByText("No encontramos este asset")).toBeVisible()
+  })
+
   test("opening Hasta while Desde's calendar is still open never leaves two grids mounted", async ({
     page,
   }) => {

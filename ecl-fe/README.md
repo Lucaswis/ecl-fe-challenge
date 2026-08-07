@@ -8,8 +8,13 @@ Frontend for the Eclypsium Sr. Frontend Engineer challenge: a dashboard to list,
 - **Asset detail view**: click an asset to see its components (in an accordion) and its full vulnerability list.
 - **Severity aggregation**: the listing shows each asset's highest severity and vulnerability count, computed server-side from the raw per-asset vulnerability data the mock backend exposes — resolved with a single `Promise.allSettled` fan-out so one asset's failed lookup doesn't take down the rest of the table.
 - **Theme toggle** (light/dark) and a **language toggle** (ES/EN) for the app's own UI text.
+- **Create and delete assets**, entirely client-side. See below for why.
 
-None of the last three were required by the brief — they're there because they made for a more complete submission.
+None of these were required by the brief — they're there because they made for a more complete submission.
+
+### About create/delete
+
+The mock backend only exposes `GET` endpoints — there's nowhere to actually persist a new asset or a deletion. Rather than fake a backend that doesn't really save anything either, creating and deleting assets here is honest about what it is: in-memory state that resets on page reload. Delete removes a row (real or newly-created) from view without touching the mock. Create opens a form for the asset's base fields plus its components and vulnerabilities, and the result shows up in the table exactly like a real asset — same filtering, same pagination, same severity badge, and its detail page renders through the identical components a real asset uses. Refresh the page and everything you created or deleted is back to how the mock actually has it.
 
 ## Stack
 
