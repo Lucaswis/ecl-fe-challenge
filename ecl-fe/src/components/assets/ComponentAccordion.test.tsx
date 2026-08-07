@@ -1,4 +1,6 @@
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
+
+import { renderWithLocale } from "@/test-utils/render-with-locale"
 import { ComponentAccordion } from "./ComponentAccordion"
 import type { ComponentResult } from "@/lib/assets/types"
 
@@ -35,7 +37,7 @@ const RESULTS: ComponentResult[] = [
 
 describe("ComponentAccordion", () => {
   it("renders one trigger per component, all expanded by default", () => {
-    render(<ComponentAccordion results={RESULTS} />)
+    renderWithLocale(<ComponentAccordion results={RESULTS} />)
 
     const triggers = screen.getAllByRole("button")
     expect(triggers).toHaveLength(2)
@@ -45,9 +47,15 @@ describe("ComponentAccordion", () => {
   })
 
   it("shows an empty-state message and no accordion when there are no components", () => {
-    render(<ComponentAccordion results={[]} />)
+    renderWithLocale(<ComponentAccordion results={[]} />)
 
     expect(screen.queryByRole("button")).not.toBeInTheDocument()
-    expect(screen.getByText(/no tiene componentes/i)).toBeInTheDocument()
+    expect(screen.getByText("Este asset no tiene componentes registrados.")).toBeInTheDocument()
+  })
+
+  it("translates the empty-state message when locale is en", () => {
+    renderWithLocale(<ComponentAccordion results={[]} />, "en")
+
+    expect(screen.getByText("This asset has no registered components.")).toBeInTheDocument()
   })
 })

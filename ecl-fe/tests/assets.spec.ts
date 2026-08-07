@@ -217,6 +217,27 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
     await expect(page.getByText("No encontramos este asset")).toBeVisible()
   })
 
+  test("a created asset's detail page translates fully when switching to English", async ({ page }) => {
+    await page.goto("/")
+
+    await page.getByRole("button", { name: "Agregar asset" }).click()
+    await page.getByLabel("Nombre").fill("English Detail Asset")
+    await page.getByLabel("Descripción").fill("Rendered through the local store")
+    await page.getByRole("button", { name: "Crear" }).click()
+
+    await page.getByRole("link", { name: "English Detail Asset" }).click()
+    await expect(page).toHaveURL(/\/assets\/local-/)
+
+    await page.getByRole("button", { name: "Cambiar a EN" }).click()
+
+    await expect(page.getByText("Created", { exact: true })).toBeVisible()
+    await expect(page.getByText("Last scan")).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Components" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Vulnerabilities" })).toBeVisible()
+    await expect(page.getByText("This asset has no registered components.")).toBeVisible()
+    await expect(page.getByText("No vulnerabilities registered.")).toBeVisible()
+  })
+
   test("opening Hasta while Desde's calendar is still open never leaves two grids mounted", async ({
     page,
   }) => {

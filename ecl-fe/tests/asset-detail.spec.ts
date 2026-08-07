@@ -53,4 +53,22 @@ test.describe("asset detail view", () => {
     await expect(page.getByRole("heading", { name: "Production Server" })).toBeVisible()
     await expect(page.getByRole("button", { name: "nginx" })).toBeVisible()
   })
+
+  test("switching to English translates the header dates, section headings and empty states", async ({
+    page,
+  }) => {
+    await page.goto("/assets/asset-13")
+
+    await expect(page.getByText("Este asset no tiene componentes registrados.")).toBeVisible()
+    await expect(page.getByText("Listado de vulnerabilidades no disponible en este momento.")).toBeVisible()
+
+    await page.getByRole("button", { name: "Cambiar a EN" }).click()
+
+    await expect(page.getByText("Created", { exact: true })).toBeVisible()
+    await expect(page.getByText("Last scan")).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Components" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Vulnerabilities" })).toBeVisible()
+    await expect(page.getByText("This asset has no registered components.")).toBeVisible()
+    await expect(page.getByText("Vulnerability list unavailable right now.")).toBeVisible()
+  })
 })

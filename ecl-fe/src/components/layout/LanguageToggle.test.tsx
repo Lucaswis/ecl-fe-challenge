@@ -24,10 +24,25 @@ describe("LanguageToggle", () => {
     document.cookie = "locale=; max-age=0"
   })
 
-  it("shows the current locale", () => {
+  it("shows the target locale, not the current one", () => {
     renderToggle("es")
 
-    expect(screen.getByRole("button")).toHaveTextContent("ES")
+    expect(screen.getByRole("button")).toHaveTextContent("EN")
+  })
+
+  it("shows the flag for the target locale", () => {
+    renderToggle("es")
+
+    const flagTitle = screen.getByRole("button").querySelector("svg title")
+    expect(flagTitle).toHaveTextContent("EN")
+  })
+
+  it("swaps the flag when the locale changes", () => {
+    renderToggle("en")
+
+    const button = screen.getByRole("button")
+    expect(button).toHaveTextContent("ES")
+    expect(button.querySelector("svg title")).toHaveTextContent("ES")
   })
 
   it("writes the cookie for the other locale and refreshes, cookie first", async () => {
