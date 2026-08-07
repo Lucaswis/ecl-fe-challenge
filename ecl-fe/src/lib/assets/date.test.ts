@@ -37,7 +37,15 @@ describe("formatDisplayDate", () => {
     expect(formatDisplayDate(null)).toBeNull()
   })
 
-  it("renders a readable Spanish date", () => {
+  it("renders a readable Spanish date by default", () => {
     expect(formatDisplayDate("2025-01-10")).toBe("10 de enero de 2025")
+  })
+
+  it("renders a readable Spanish date when locale is es", () => {
+    expect(formatDisplayDate("2025-09-05", "es")).toBe("5 de septiembre de 2025")
+  })
+
+  it("renders a readable English date when locale is en", () => {
+    expect(formatDisplayDate("2025-09-05", "en")).toBe("September 5, 2025")
   })
 })
