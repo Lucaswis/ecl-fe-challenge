@@ -21,4 +21,22 @@ describe("createAssetFormReducer", () => {
     expect(state.components).toHaveLength(1)
     expect(state.components[0].key).toBe(second.key)
   })
+
+  it("setComponentField updates only the targeted row, leaving siblings untouched", () => {
+    const withTwoRows = createAssetFormReducer(
+      createAssetFormReducer(initialCreateAssetFormState, { type: "addComponent" }),
+      { type: "addComponent" }
+    )
+    const [first, second] = withTwoRows.components
+
+    const state = createAssetFormReducer(withTwoRows, {
+      type: "setComponentField",
+      key: first.key,
+      field: "name",
+      value: "nginx",
+    })
+
+    expect(state.components[0]).toMatchObject({ key: first.key, name: "nginx" })
+    expect(state.components[1]).toEqual(second)
+  })
 })
