@@ -17,12 +17,14 @@ const AssetStoreContext = createContext<AssetStoreValue | null>(null)
 
 export function AssetStoreProvider({ children }: { children: ReactNode }) {
   const [created, setCreated] = useState<LocalAsset[]>([])
-  const [deletedIds] = useState<ReadonlySet<string>>(new Set())
+  const [deletedIds, setDeletedIds] = useState<ReadonlySet<string>>(new Set())
 
   const addAsset = useCallback((asset: LocalAsset) => {
     setCreated((prev) => [asset, ...prev])
   }, [])
-  const deleteAsset = useCallback(() => {}, [])
+  const deleteAsset = useCallback((id: string) => {
+    setDeletedIds((prev) => new Set(prev).add(id))
+  }, [])
   const getLocalAsset = useCallback(() => undefined, [])
 
   const value = useMemo(
