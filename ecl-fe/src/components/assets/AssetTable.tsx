@@ -6,12 +6,13 @@ import { AssetEmptyState } from "@/components/assets/AssetEmptyState"
 import { AssetFilters } from "@/components/assets/AssetFilters"
 import { AssetPagination } from "@/components/assets/AssetPagination"
 import { AssetTableRow } from "@/components/assets/AssetTableRow"
+import { CreateAssetDialog } from "@/components/assets/CreateAssetDialog"
 import { useAssetStore } from "@/components/asset-store-context"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useAssetTable } from "@/hooks/use-asset-table"
 import { useTranslation } from "@/hooks/use-translation"
 import { mergeAssets } from "@/lib/assets/local-store"
-import type { AssetWithSeverity } from "@/lib/assets/types"
+import type { AssetWithSeverity, LocalAsset } from "@/lib/assets/types"
 
 interface AssetTableProps {
   assets: AssetWithSeverity[]
@@ -19,7 +20,7 @@ interface AssetTableProps {
 
 export function AssetTable({ assets }: AssetTableProps) {
   const { t } = useTranslation()
-  const { created, deletedIds, deleteAsset } = useAssetStore()
+  const { created, deletedIds, addAsset, deleteAsset } = useAssetStore()
   const merged = useMemo(
     () => mergeAssets(assets, created, deletedIds),
     [assets, created, deletedIds]
@@ -48,6 +49,11 @@ export function AssetTable({ assets }: AssetTableProps) {
     goToPage(1)
   }
 
+  const handleCreate = (asset: LocalAsset) => {
+    addAsset(asset)
+    goToPage(1)
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <AssetFilters
@@ -59,6 +65,7 @@ export function AssetTable({ assets }: AssetTableProps) {
         onSeverityChange={setSeverity}
         onReset={resetFilters}
         isFiltered={isFiltered}
+        actions={<CreateAssetDialog onCreate={handleCreate} />}
       />
 
       {totalCount === 0 ? (
