@@ -21,7 +21,7 @@ export function AssetTableRow({ asset, index }: AssetTableRowProps) {
       style={{ animationDelay: `${Math.min(index, 8) * 20}ms` }}
     >
       <TableCell className="font-medium">
-        <Link href={`/assets/${asset.id}`} className="hover:underline">
+        <Link href={`/assets/${asset.id}`} className="text-primary underline-offset-4 hover:underline">
           {asset.name}
         </Link>
       </TableCell>
