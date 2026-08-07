@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { ThemeProvider } from "next-themes"
 
 import { LocaleProvider } from "@/lib/i18n/locale-context"
-import { ThemeToggle } from "./ThemeToggle"
+import { ThemeToggle } from "."
 
 function renderToggle(locale: "es" | "en" = "es") {
   return render(

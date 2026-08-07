@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { Footer } from "./Footer"
+import { Footer } from "."
 
 describe("Footer", () => {
   it("renders the created-by credit with the author's name", () => {
