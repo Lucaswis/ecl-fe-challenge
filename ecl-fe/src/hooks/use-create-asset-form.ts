@@ -33,6 +33,8 @@ export function createAssetFormReducer(
   switch (action.type) {
     case "addComponent":
       return { ...state, components: [...state.components, emptyComponentDraft(crypto.randomUUID())] }
+    case "removeComponent":
+      return { ...state, components: state.components.filter((component) => component.key !== action.key) }
     default:
       return state
   }
