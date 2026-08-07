@@ -16,10 +16,12 @@ interface AssetStoreValue {
 const AssetStoreContext = createContext<AssetStoreValue | null>(null)
 
 export function AssetStoreProvider({ children }: { children: ReactNode }) {
-  const [created] = useState<LocalAsset[]>([])
+  const [created, setCreated] = useState<LocalAsset[]>([])
   const [deletedIds] = useState<ReadonlySet<string>>(new Set())
 
-  const addAsset = useCallback(() => {}, [])
+  const addAsset = useCallback((asset: LocalAsset) => {
+    setCreated((prev) => [asset, ...prev])
+  }, [])
   const deleteAsset = useCallback(() => {}, [])
   const getLocalAsset = useCallback(() => undefined, [])
 
