@@ -1,4 +1,7 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge"
+import { useTranslation } from "@/hooks/use-translation"
 import type { HighestSeverity, Severity } from "@/lib/assets/types"
 
 interface SeverityBadgeProps {
@@ -13,15 +16,13 @@ const SEVERITY_CLASSNAME: Record<Severity, string> = {
   CRITICAL: "border-transparent bg-destructive/10 text-destructive dark:bg-destructive/20",
 }
 
-function vulnerabilityLabel(count: number): string {
-  return count === 1 ? "1 vulnerabilidad" : `${count} vulnerabilidades`
-}
-
 export function SeverityBadge({ severity, vulnerabilityCount }: SeverityBadgeProps) {
+  const { t } = useTranslation()
+
   if (severity === null) {
     return (
-      <Badge variant="outline" className="border-dashed" title="Severidad no disponible">
-        N/D
+      <Badge variant="outline" className="border-dashed" title={t("severity.unavailableTitle")}>
+        {t("severity.unavailable")}
       </Badge>
     )
   }
@@ -29,16 +30,24 @@ export function SeverityBadge({ severity, vulnerabilityCount }: SeverityBadgePro
   if (severity === "NONE") {
     return (
       <Badge className="border-transparent bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-        Sin vulnerabilidades
+        {t("severity.none")}
       </Badge>
     )
   }
 
+  const vulnerabilityLabel =
+    vulnerabilityCount === undefined
+      ? undefined
+      : t(
+          vulnerabilityCount === 1
+            ? "severity.vulnerabilityCount.singular"
+            : "severity.vulnerabilityCount.plural",
+          { count: String(vulnerabilityCount) }
+        )
+
   return (
     <Badge className={SEVERITY_CLASSNAME[severity]}>
-      {vulnerabilityCount === undefined
-        ? severity
-        : `${severity} · ${vulnerabilityLabel(vulnerabilityCount)}`}
+      {vulnerabilityLabel === undefined ? severity : `${severity} · ${vulnerabilityLabel}`}
     </Badge>
   )
 }
