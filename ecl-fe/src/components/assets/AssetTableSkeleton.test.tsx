@@ -23,4 +23,13 @@ describe("AssetTableSkeleton", () => {
     renderWithLocale(<AssetTableSkeleton />, "en")
     expect(screen.getByLabelText("Loading assets")).toBeInTheDocument()
   })
+
+  it("spans all six table columns per placeholder row", () => {
+    renderWithLocale(<AssetTableSkeleton rows={1} />)
+
+    expect(screen.getByTestId("asset-table-skeleton-row").querySelector("td")).toHaveAttribute(
+      "colSpan",
+      "6"
+    )
+  })
 })

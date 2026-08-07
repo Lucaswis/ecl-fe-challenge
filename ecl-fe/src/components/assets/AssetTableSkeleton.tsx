@@ -16,7 +16,7 @@ export function AssetTableSkeleton({ rows = 10 }: AssetTableSkeletonProps) {
       <TableBody>
         {Array.from({ length: rows }).map((_, index) => (
           <TableRow key={index} data-testid="asset-table-skeleton-row">
-            <TableCell colSpan={5}>
+            <TableCell colSpan={6}>
               <Skeleton className="h-6 w-full" />
             </TableCell>
           </TableRow>
