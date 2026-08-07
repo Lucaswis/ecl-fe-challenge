@@ -25,7 +25,13 @@ export function AssetStoreProvider({ children }: { children: ReactNode }) {
   const deleteAsset = useCallback((id: string) => {
     setDeletedIds((prev) => new Set(prev).add(id))
   }, [])
-  const getLocalAsset = useCallback(() => undefined, [])
+  const getLocalAsset = useCallback(
+    (id: string) => {
+      if (deletedIds.has(id)) return undefined
+      return created.find((asset) => asset.id === id)
+    },
+    [created, deletedIds]
+  )
 
   const value = useMemo(
     () => ({ created, deletedIds, addAsset, deleteAsset, getLocalAsset }),
