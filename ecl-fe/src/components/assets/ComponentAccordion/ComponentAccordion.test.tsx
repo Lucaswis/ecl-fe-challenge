@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { ComponentAccordion } from "./ComponentAccordion"
+import { ComponentAccordion } from "."
 import type { ComponentResult } from "@/lib/assets/types"
 
 const RESULTS: ComponentResult[] = [

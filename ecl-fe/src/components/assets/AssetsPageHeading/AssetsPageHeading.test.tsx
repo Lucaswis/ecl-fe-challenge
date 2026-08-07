@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetsPageHeading } from "./AssetsPageHeading"
+import { AssetsPageHeading } from "."
 
 describe("AssetsPageHeading", () => {
   it("renders the heading and description in Spanish by default", () => {

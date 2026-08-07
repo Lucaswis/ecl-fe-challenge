@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetEmptyState } from "./AssetEmptyState"
+import { AssetEmptyState } from "."
 
 describe("AssetEmptyState", () => {
   it("shows the no-data copy and no reset button for the no-data variant", () => {

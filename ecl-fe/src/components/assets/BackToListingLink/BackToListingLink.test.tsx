@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { BackToListingLink } from "./BackToListingLink"
+import { BackToListingLink } from "."
 
 describe("BackToListingLink", () => {
   it("links back to the asset listing, styled as a button", () => {

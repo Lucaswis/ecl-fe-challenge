@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { DeleteAssetDialog } from "./DeleteAssetDialog"
+import { DeleteAssetDialog } from "."
 
 describe("DeleteAssetDialog", () => {
   it("is closed by default", () => {

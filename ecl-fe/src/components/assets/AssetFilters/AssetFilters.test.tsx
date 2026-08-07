@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
 import type { Locale } from "@/lib/i18n/types"
-import { AssetFilters } from "./AssetFilters"
+import { AssetFilters } from "."
 import type { AssetFilterCriteria } from "@/lib/assets/types"
 
 const CRITERIA: AssetFilterCriteria = {

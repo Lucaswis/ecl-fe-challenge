@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { ComponentCard } from "./ComponentCard"
+import { ComponentCard } from "."
 import type { ComponentResult } from "@/lib/assets/types"
 
 const COMPONENT: ComponentResult = {

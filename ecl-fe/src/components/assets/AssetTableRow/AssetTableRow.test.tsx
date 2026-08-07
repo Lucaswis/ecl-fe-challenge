@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { Table, TableBody } from "@/components/ui/table"
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetTableRow } from "./AssetTableRow"
+import { AssetTableRow } from "."
 import type { AssetWithSeverity } from "@/lib/assets/types"
 
 const ASSET: AssetWithSeverity = {

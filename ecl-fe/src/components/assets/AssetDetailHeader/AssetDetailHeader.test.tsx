@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetDetailHeader } from "./AssetDetailHeader"
+import { AssetDetailHeader } from "."
 import type { AssetDetail } from "@/lib/assets/types"
 
 const ASSET: AssetDetail = {

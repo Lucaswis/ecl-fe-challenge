@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetTableSkeleton } from "./AssetTableSkeleton"
+import { AssetTableSkeleton } from "."
 
 describe("AssetTableSkeleton", () => {
   it("renders 10 placeholder rows by default", () => {

@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
 import { renderWithLocale } from "@/test-utils/render-with-locale"
-import { AssetPagination } from "./AssetPagination"
+import { AssetPagination } from "."
 
 describe("AssetPagination", () => {
   it("shows the current page and total pages", () => {
