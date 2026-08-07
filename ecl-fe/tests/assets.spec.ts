@@ -131,4 +131,24 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
 
     await expect(page).toHaveURL(/\/assets\/asset-1$/)
   })
+
+  test("opening Hasta while Desde's calendar is still open never leaves two grids mounted", async ({
+    page,
+  }) => {
+    await page.goto("/")
+
+    await page.getByLabel("Desde").click()
+    await page.getByRole("button", { name: "Go to the Previous Month" }).click()
+
+    // Jump straight to Hasta without picking a day in Desde first.
+    await page.getByLabel("Hasta").click()
+
+    const currentMonthCaption = new Date().toLocaleString("en-US", {
+      month: "long",
+      year: "numeric",
+    })
+
+    await expect(page.getByRole("grid")).toHaveCount(1)
+    await expect(page.getByRole("grid")).toHaveAttribute("aria-label", currentMonthCaption)
+  })
 })
