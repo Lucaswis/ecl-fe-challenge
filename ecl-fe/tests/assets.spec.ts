@@ -49,7 +49,7 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   test("narrows results with the text filter", async ({ page }) => {
     await page.goto("/")
 
-    await page.getByLabel("Buscar").fill("server")
+    await page.getByLabel("Buscar").pressSequentially("server")
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(3)
     await expect(page.getByText("Production Server")).toBeVisible()
@@ -71,7 +71,7 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   }) => {
     await page.goto("/")
 
-    await page.getByLabel("Buscar").fill("this-does-not-exist")
+    await page.getByLabel("Buscar").pressSequentially("this-does-not-exist")
 
     await expect(page.getByText("Ningún asset coincide con los filtros")).toBeVisible()
 
@@ -107,7 +107,7 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
   }) => {
     await page.goto("/")
 
-    await page.getByLabel("Buscar").fill("Scanner Node")
+    await page.getByLabel("Buscar").pressSequentially("Scanner Node")
 
     await expect(page.getByTestId("asset-table-row")).toHaveCount(1)
     await expect(page.getByText("N/D")).toBeVisible()
@@ -130,5 +130,25 @@ test.describe("asset dashboard — listing, filtering and pagination", () => {
     await page.getByRole("link", { name: "Production Server" }).click()
 
     await expect(page).toHaveURL(/\/assets\/asset-1$/)
+  })
+
+  test("opening Hasta while Desde's calendar is still open never leaves two grids mounted", async ({
+    page,
+  }) => {
+    await page.goto("/")
+
+    await page.getByLabel("Desde").click()
+    await page.getByRole("button", { name: "Go to the Previous Month" }).click()
+
+    // Jump straight to Hasta without picking a day in Desde first.
+    await page.getByLabel("Hasta").click()
+
+    const currentMonthCaption = new Date().toLocaleString("en-US", {
+      month: "long",
+      year: "numeric",
+    })
+
+    await expect(page.getByRole("grid")).toHaveCount(1)
+    await expect(page.getByRole("grid")).toHaveAttribute("aria-label", currentMonthCaption)
   })
 })

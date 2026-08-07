@@ -1,9 +1,10 @@
 "use client"
 
 import { Field } from "@base-ui/react/field"
+import type { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Calendar03Icon } from "@hugeicons/core-free-icons"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -48,9 +49,18 @@ interface DateFilterFieldProps {
   label: string
   value: string | null
   onChange: (date: string | null) => void
+  actionsRef?: React.RefObject<PopoverPrimitive.Root.Actions | null>
+  onOpen?: () => void
 }
 
-function DateFilterField({ id, label, value, onChange }: DateFilterFieldProps) {
+function DateFilterField({
+  id,
+  label,
+  value,
+  onChange,
+  actionsRef,
+  onOpen,
+}: DateFilterFieldProps) {
   const [open, setOpen] = useState(false)
   const selected = isoToDate(value)
 
@@ -59,7 +69,14 @@ function DateFilterField({ id, label, value, onChange }: DateFilterFieldProps) {
       <label htmlFor={id} className="text-xs font-medium text-muted-foreground">
         {label}
       </label>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={open}
+        onOpenChange={(nextOpen) => {
+          if (nextOpen) onOpen?.()
+          setOpen(nextOpen)
+        }}
+        actionsRef={actionsRef}
+      >
         <PopoverTrigger
           render={<Button id={id} variant="outline" size="sm" className="justify-start gap-1.5" />}
         >
@@ -93,15 +110,16 @@ export function AssetFilters({
   onReset,
   isFiltered,
 }: AssetFiltersProps) {
+  const dateFromActionsRef = useRef<PopoverPrimitive.Root.Actions>(null)
+  const dateToActionsRef = useRef<PopoverPrimitive.Root.Actions>(null)
+
   return (
     <div
       className="flex flex-wrap items-end gap-3 rounded-lg border border-border/50 bg-card/50 p-3"
       data-testid="asset-filters"
     >
       <Field.Root className="flex flex-col gap-1">
-        <label htmlFor="asset-query" className="text-xs font-medium text-muted-foreground">
-          Buscar
-        </label>
+        <Field.Label className="text-xs font-medium text-muted-foreground">Buscar</Field.Label>
         <Input
           id="asset-query"
           placeholder="Nombre o descripción"
@@ -138,6 +156,8 @@ export function AssetFilters({
         label="Desde"
         value={criteria.dateFrom}
         onChange={onDateFromChange}
+        actionsRef={dateFromActionsRef}
+        onOpen={() => dateToActionsRef.current?.unmount()}
       />
 
       <DateFilterField
@@ -145,6 +165,8 @@ export function AssetFilters({
         label="Hasta"
         value={criteria.dateTo}
         onChange={onDateToChange}
+        actionsRef={dateToActionsRef}
+        onOpen={() => dateFromActionsRef.current?.unmount()}
       />
 
       <div className="flex flex-col gap-1">
