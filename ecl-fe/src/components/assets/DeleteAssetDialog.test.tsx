@@ -36,4 +36,28 @@ describe("DeleteAssetDialog", () => {
     expect(screen.getByText("Delete asset?")).toBeInTheDocument()
     expect(screen.getByText("Are you sure you want to delete Production Server?")).toBeInTheDocument()
   })
+
+  it("calls onConfirm and closes when the user confirms", async () => {
+    const user = userEvent.setup()
+    const onConfirm = jest.fn()
+    renderWithLocale(<DeleteAssetDialog assetName="Production Server" onConfirm={onConfirm} />)
+
+    await user.click(screen.getByRole("button", { name: "Eliminar Production Server" }))
+    await user.click(screen.getByRole("button", { name: "Eliminar" }))
+
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+  })
+
+  it("does not call onConfirm when the user cancels", async () => {
+    const user = userEvent.setup()
+    const onConfirm = jest.fn()
+    renderWithLocale(<DeleteAssetDialog assetName="Production Server" onConfirm={onConfirm} />)
+
+    await user.click(screen.getByRole("button", { name: "Eliminar Production Server" }))
+    await user.click(screen.getByRole("button", { name: "Cancelar" }))
+
+    expect(onConfirm).not.toHaveBeenCalled()
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+  })
 })
