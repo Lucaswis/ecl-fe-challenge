@@ -3,6 +3,8 @@ export const en = {
   "header.theme.toggle": "Toggle theme",
   "header.language.switchTo": "Switch to {locale}",
   "assetDetail.backToListing": "Back to listing",
+  "assetDetail.componentsHeading": "Components",
+  "assetDetail.vulnerabilitiesHeading": "Vulnerabilities",
   "footer.createdBy": "Created by",
   "assetsPage.heading": "Assets",
   "assetsPage.description": "List of registered assets, with filters by name, description and date.",

@@ -1,4 +1,5 @@
 import { AssetDetailHeader } from "@/components/assets/AssetDetailHeader"
+import { AssetDetailSection } from "@/components/assets/AssetDetailSection"
 import { BackToListingLink } from "@/components/assets/BackToListingLink"
 import { ComponentAccordion } from "@/components/assets/ComponentAccordion"
 import { VulnerabilityList } from "@/components/assets/VulnerabilityList"
@@ -14,15 +15,13 @@ export function AssetDetailContent({ detail }: AssetDetailContentProps) {
       <BackToListingLink />
       <AssetDetailHeader asset={detail.asset} />
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-foreground">Componentes</h2>
+      <AssetDetailSection titleKey="assetDetail.componentsHeading">
         <ComponentAccordion results={detail.components} />
-      </section>
+      </AssetDetailSection>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-foreground">Vulnerabilidades</h2>
+      <AssetDetailSection titleKey="assetDetail.vulnerabilitiesHeading">
         <VulnerabilityList vulnerabilities={detail.vulnerabilities} />
-      </section>
+      </AssetDetailSection>
     </div>
   )
 }
