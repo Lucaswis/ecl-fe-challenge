@@ -1,5 +1,8 @@
+"use client"
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { ComponentCard } from "@/components/assets/ComponentCard"
+import { useTranslation } from "@/hooks/use-translation"
 import type { ComponentResult } from "@/lib/assets/types"
 
 interface ComponentAccordionProps {
@@ -7,10 +10,10 @@ interface ComponentAccordionProps {
 }
 
 export function ComponentAccordion({ results }: ComponentAccordionProps) {
+  const { t } = useTranslation()
+
   if (results.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">Este asset no tiene componentes registrados.</p>
-    )
+    return <p className="text-sm text-muted-foreground">{t("assetDetail.noComponents")}</p>
   }
 
   return (
